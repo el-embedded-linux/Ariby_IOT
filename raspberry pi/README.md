@@ -31,7 +31,7 @@ SAMBA 설치
     comment = comment
     path = /home/pi #공유할 디렉토리
     valid user = pi #사용자
-    #writable = yes #쓰기 가능 여부
+    writable = yes #쓰기 가능 여부
     browseable = yes #공유 폴더의 목록을 보여줌
 
 삼바 재실행
