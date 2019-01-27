@@ -6,14 +6,18 @@ import time
 import pickle
 import zlib
 
+for(int i=0;i<206;i++){
+    country += famous;
+}
+
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('192.168.219.109', 8485))
+client_socket.connect(('192.168.219.107', 8485))
 connection = client_socket.makefile('wb')
 
-cam = cv2.VideoCapture(2)
+cam = cv2.VideoCapture(0)
 
-cam.set(3, 320);
-cam.set(4, 240);
+cam.set(3, 160);
+cam.set(4, 90);
 
 img_counter = 0
 
@@ -21,9 +25,6 @@ encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
 while True:
     ret, frame = cam.read()
-    cv2.imshow('ImageWindow',frame)
-    cv2.waitKey(1)
-    frame = cv2.resize(frame, dsize=(320, 240), interpolation=cv2.INTER_AREA)
     result, frame = cv2.imencode('.jpg', frame, encode_param)
 #    data = zlib.compress(pickle.dumps(frame, 0))
     data = pickle.dumps(frame, 0)
