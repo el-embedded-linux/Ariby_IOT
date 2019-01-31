@@ -1,12 +1,12 @@
 import handsoff
 
-def handson():
-    print("손잡이를 잡아주세요")
+def on():
+    print("Please grab the handle")
 
-def handsoff():
-    print("손잡이를 다시 잡았습니다.")
+def off():
+    print("grabbed the handle again")
 
-t = touch.handsoff(handson, handsoff)
+t = handsoff.handsoff(on, off)
 t.start()
 
 while True:

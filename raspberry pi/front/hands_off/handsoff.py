@@ -9,7 +9,7 @@ class handsoff(threading.Thread):
     handon = None #콜백함수
     handoff = None
     alarmTimer = 0
-    ALARMMAX = 20 #알람이 울리는 시간
+    ALARMMAX = 10 #알람이 울리는 시간
     isAlarm = False #현재 알람이 울리고 있는지 flag변수
 
     #initializer
@@ -24,10 +24,11 @@ class handsoff(threading.Thread):
     def run(self):
         while True:
             sum = 0
-            for i in range(0,10):
+            for i in range(0,50):
                 sum += GPIO.input(self.handle)
-                sleep(0.05)
-            if sum>3: #touch
+                sleep(0.01)
+            print(sum)
+            if sum>20: #touch
                 self.alarmTimer = 0
                 if self.isAlarm == True:
                     self.isAlarm = False
