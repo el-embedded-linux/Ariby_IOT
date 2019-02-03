@@ -1,33 +1,45 @@
 import RPi.GPIO as GPIO
+import threading
 from time import sleep
 
-LED_Right = 24
-LED_Left = 23
+def blink(led):
+    GPIO.output(led, True)
+    sleep(0.5)
+    GPIO.output(led, False)
+    sleep(0.5)
 
-Swt_Right = 22
-Swt_Left = 17
-Swt_Mid = 27
+def my_callback1(btn):
+    t1 = threading.Thread(target=blink, args=(LED_Left,))
+    t1.start()
+
+def my_callback2(btn):
+    t2 = threading.Thread(target=blink, args=(LED_Rigt,))
+    t2.start()
+
+GPIO.setwarnings(False)
+
+LED_Left = 27
+LED_Rigt = 22
+btn_Left = 23
+btn_Rigt = 24
 
 GPIO.setmode(GPIO.BCM)
 
-GPIO.setup(LED_Right, GPIO.OUT)
 GPIO.setup(LED_Left, GPIO.OUT)
+GPIO.setup(LED_Rigt, GPIO.OUT)
 
-GPIO.setup(Swt_Right, GPIO.IN)
-GPIO.setup(Swt_Left, GPIO.IN)
-GPIO.setup(Swt_Mid, GPIO.IN)
+GPIO.setup(btn_Left, GPIO.IN)
+GPIO.setup(btn_Rigt, GPIO.IN)
+
+GPIO.add_event_detect(btn_Left, GPIO.RISING, callback = my_callback1, bouncetime = 500)
+GPIO.add_event_detect(btn_Rigt, GPIO.RISING, callback = my_callback2, bouncetime = 500)
+
+GPIO.output(LED_Left, False)
+GPIO.output(LED_Rigt, False)
 
 try:
-	while True:
-		if GPIO.input(Swt_Right) == 0:
-			GPIO.output(LED_Right, True)
-			GPIO.output(LED_Left, False)
-		elif GPIO.input(Swt_Left) == 0:
-			GPIO.output(LED_Right, False)
-			GPIO.output(LED_Left, True)
-		else:
-			GPIO.output(LED_Right, False)
-			GPIO.output(LED_Left, False)
+    while True:
+        pass
 
 except KeyboardInterrupt:
 	GPIO.cleanup()
