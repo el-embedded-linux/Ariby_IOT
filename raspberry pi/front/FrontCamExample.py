@@ -8,16 +8,18 @@ class App(QWidget):
         super().__init__()
         self.setGeometry(0, 0, 800, 480)
 
-        self.label = QLabel(self)
-        self.label.resize(800,480) #QLabel 생성 사이즈 변경
+        self.frontCamera = FrontCam.FrontCam() #FrontCam 클라스 생성
 
-        self.frontCamera = FrontCam.FrontCam(self.frameUpdate) #FrontCam 클라스 생성
-        self.frontCamera.start() #쓰레드 시작
+        self.start = QPushButton("START", self)
+        self.start.clicked.connect(self.frontCamera.start) #FrontCam 의 메소드 start()
+        self.start.move(100,100)
 
+        self.stop = QPushButton("STOP", self)
+        self.stop.clicked.connect(self.frontCamera.stop) #FrontCam 의 메소드 stop()
+        self.stop.move(200,100)
         self.show()
 
-    def frameUpdate(self, frame):
-        self.label.setPixmap(frame) #label의 Pixmap 변경
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

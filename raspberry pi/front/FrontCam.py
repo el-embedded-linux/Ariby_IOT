@@ -1,39 +1,34 @@
-import cv2
 import threading
-from PyQt5.QtGui import *
+from picamera import PiCamera
 
-class FrontCam(threading.Thread):
+class FrontCam():
     isStoped = False
 
     #initializer
-    def __init__(self, frameUpdate):
-        threading.Thread.__init__(self)
-        self.frameUpdate = frameUpdate
+    def __init__(self):
+        self.camera = PiCamera()
+        self.camera.resolution = (1280, 720)
+        self.camera.framerate = 24
+
+    #thread start
+    def start(self):
+        t = threading.Thread(target=self.run, args=())
+        t.start()
 
     def run(self):
-        self.cap = cv2.VideoCapture(0)
-        self.cap.set(3,640)
-        self.cap.set(4,360)
-        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-        self.outSream = cv2.VideoWriter('output.avi', fourcc, 24.0, (640,360))
+        #TODO 파일명 날짜-시간으로 변경
+
+        self.camera.start_recording('/home/pi/video.h264')
+        self.isStoped = False
+        print("start front camera recording")
 
         while True:
-            ret, frame = self.cap.read()
-
-            if ret:
-                self.outSream.write(frame)
-                # frame = cv2.flip(frame, 0) #이미지 반전,  0:상하, 1 : 좌우
-                frame = cv2.resize(frame, dsize=(800, 480), interpolation=cv2.INTER_AREA) #라즈베리파이 스크린 사이즈에 맞게 RESIZE
-                image = QImage(frame, frame.shape[1], frame.shape[0], frame.shape[1] * 3,QImage.Format_RGB888) #create QIamge
-                pix = QPixmap(image) #create QPixmap
-                self.frameUpdate(pix) #callback frameUpdate
-
-            else:
-                break
-
             if self.isStoped: #flag check
                 break
-        self.cap.release()
+
+        self.camera.stop_recording()
+        print("stop front camera recording")
+        #TODO 완료된 파일 확장자 변경
 
     def stop(self):
         self.isStoped = True
