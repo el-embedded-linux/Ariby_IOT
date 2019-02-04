@@ -2,7 +2,7 @@ import threading
 from picamera import PiCamera
 
 class FrontCam():
-    isStoped = False
+    isStoped = True
 
     #initializer
     def __init__(self):
@@ -12,16 +12,18 @@ class FrontCam():
 
     #thread start
     def start(self):
-        t = threading.Thread(target=self.run, args=())
-        t.start()
+        if self.isStoped:
+            t = threading.Thread(target=self.run, args=())
+            t.start()
+        else:
+            print("이미 녹화중입니다.")
 
     def run(self):
         #TODO 파일명 날짜-시간으로 변경
 
         self.camera.start_recording('/home/pi/video.h264')
-        self.isStoped = False
         print("start front camera recording")
-
+        self.isStoped = False
         while True:
             if self.isStoped: #flag check
                 break
