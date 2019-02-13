@@ -1,4 +1,4 @@
-import handtouchcheck
+import handtouch
 
 def on():
     print("grab handle")
@@ -6,7 +6,7 @@ def on():
 def off():
     print("grabbed handle")
 
-t = handtouchcheck.handtouchcheck(on, off)
+t = handtouch.handtouchcheck(on, off)
 t.start()
 
 while True :

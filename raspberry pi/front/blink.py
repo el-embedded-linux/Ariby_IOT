@@ -10,7 +10,7 @@ class blinking(threading.Thread):
     LED_Rigt = None
     btn_Left = None
     btn_Rigt = None
-    
+
     def blink_Left(self, LED):
         self.func()
         GPIO.output(self.LED_Left, True)
@@ -30,7 +30,7 @@ class blinking(threading.Thread):
         GPIO.output(self.LED_Rigt, False)
 
     def __init__(self, func):
-        
+
         threading.Thread.__init__(self)
         self.func = func
         self.LED_Left = 27
@@ -47,7 +47,7 @@ class blinking(threading.Thread):
         GPIO.setup(self.btn_Rigt, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
         self.flashOut()
-    
+
     def run(self):
         GPIO.add_event_detect(self.btn_Left, GPIO.RISING, callback = self.blink_Left, bouncetime = 500)
         GPIO.add_event_detect(self.btn_Rigt, GPIO.RISING, callback = self.blink_Rigt, bouncetime = 500)
@@ -61,4 +61,3 @@ try:
 
 except KeyboardInterrupt:
     GPIO.cleanup()
-

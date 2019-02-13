@@ -3,10 +3,14 @@
 # 5.날씨 아이콘 추가(크롤링 진행했었으나 블루투스 통신으로 이용할 지 상의 후 추가 예정) 6.라즈베리파이 마우스 커서 숨김
 
 import sys
+import BackCam
+import SpeedMeter
+import blink
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from datetime import datetime
+
 
 #프로그레스바 설정
 DEFAULTSTYLE = """
@@ -155,20 +159,29 @@ class Test1ClickedDialog(QDialog):
         self.resize(200, 200)
         self.setStyleSheet("background-color:rgb(41,41,41)")
 
-        label = QLabel("Testing")
-        label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("color:white; font-family:Arial")
+        self.label = QLabel(self)
+        self.test = QLabel(self)
+        self.frontCamera = BackCam.BackCam(self.back)
+        self.frontCamera.start()
+        self.label.setGeometry(0,0,800,480)
+        self.test.setGeometry(0,0,200,200)
+        self.test.setStyleSheet("background-color:rgba(255,255,255,0)")
 
         closeBtn = QPushButton("Exit")
         closeBtn.clicked.connect(self.closeDialog)
         closeBtn.setStyleSheet("font:bold 16px Arial; border:1px; border-radius:5px; background-color:rgb(106,230,197); color:rgb(41,41,41); padding:3px;")
+        speedmeter = SpeedMeter.SpeedMeter('F0:45:DA:10:B9:C1',self.SpeedUpdate)
+        speedmeter.start_b()
 
-        layout = QGridLayout()
-        layout.addWidget(label,0, 0)
-        layout.addWidget(closeBtn,1, 0)
-
-        self.setLayout(layout)
         self.showFullScreen()
+
+    def SpeedUpdate(self, data):
+        self.test.setText("test"+data)
+        print(data)
+
+
+    def back(self, frame):
+        self.label.setPixmap(frame)
 
     def closeDialog(self):
         self.close()
@@ -335,5 +348,5 @@ if __name__ == "__main__":
     layout.setContentsMargins(0, 0, 0, 0)
 
     window.showFullScreen()
-
+    
     sys.exit(app.exec_())

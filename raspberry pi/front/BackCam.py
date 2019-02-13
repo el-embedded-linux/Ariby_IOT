@@ -11,8 +11,8 @@ class BackCam():
     #initializer
     def __init__(self, frameUpdate):
         self.frameUpdate = frameUpdate
-        sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
-        sock.bind( ('127.0.0.1',8080) )
+        self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+        self.sock.bind( ('',8080) )
 
     #thread start
     def start(self):
@@ -25,7 +25,8 @@ class BackCam():
     def run(self):
         self.isStoped = False
         while True:
-            data , addr = sock.recvfrom(65535)
+            #print('do')
+            data , addr = self.sock.recvfrom(65535)
             frame=pickle.loads(data, fix_imports=True, encoding="bytes")
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
             frame = cv2.resize(frame, dsize=(800, 480), interpolation=cv2.INTER_AREA) #라즈베리파이 스크린 사이즈에 맞게 RESIZE
