@@ -1,48 +1,77 @@
-#handsoff.py
 import RPi.GPIO as GPIO
 from time import sleep
 import threading
 
-class handsoff(threading.Thread):
-    isStoped = False
-    handle = None #핸들 포트번호
-    handon = None #콜백함수
+class handtouchcheck(threading.Thread):
+    time_stack = 0
+    overtime = 5
+    handon = None
     handoff = None
-    alarmTimer = 0
-    ALARMMAX = 10 #알람이 울리는 시간
-    isAlarm = False #현재 알람이 울리고 있는지 flag변수
 
-    #initializer
-    def __init__(self, handon, handoff):
+    
+    ledPin = None
+
+    touchR = None
+    touchL = None
+    
+    checkLED = False
+    isStopped = False
+
+
+
+
+    def __init__(self, handon, handoff):    
         threading.Thread.__init__(self)
-        self.handle = 21 #RIGHT
+        self.touchR = 23
+        self.touchL = 21
+        self.ledPin = 27
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.handle,GPIO.IN)
+        GPIO.setup(self.touchR,GPIO.IN)
+        GPIO.setup(self.touchL,GPIO.IN)
+        GPIO.setup(self.ledPin,GPIO.OUT)
+        GPIO.output(self.ledPin, False)
+
         self.handon = handon
         self.handoff = handoff
 
+
     def run(self):
         while True:
-            sum = 0
+            sumR = 0
+            sumL = 0
+
             for i in range(0,50):
-                sum += GPIO.input(self.handle)
+                sumR += GPIO.input(self.touchR)
+                sumL += GPIO.input(self.touchL)
                 sleep(0.01)
-            print(sum)
-            if sum>20: #touch
-                self.alarmTimer = 0
-                if self.isAlarm == True:
-                    self.isAlarm = False
+            
+            print('L:',sumL, '---R:',sumR)
+        
+            if sumR < 20 and sumL < 20 :
+               self.time_stack = self.time_stack + 1
+
+            else :
+                GPIO.output(self.ledPin, False)
+
+                if self.checkLED == True :
                     self.handoff()
-            else:
-                pass #no touch
-                self.alarmTimer += 1
+                    self.checkLED = False
 
-            if (self.alarmTimer > self.ALARMMAX) and self.isAlarm==False:
-                self.handon()
-                self.isAlarm = True
+                self.time_stack = 0
+            
+            ########
 
-            if self.isStoped:
+
+            if self.time_stack >= self.overtime :
+                GPIO.output(self.ledPin, True)
+                self.checkLED = True
+                self.handon() 
+
+
+
+            if self.isStopped:
                 break
+        
 
-    def stop(self):
-        self.isStoped = True
+
+
