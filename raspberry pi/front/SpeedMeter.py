@@ -8,6 +8,7 @@ class SpeedMeter():
     isStoped = True
     callback = None
     address = "address"
+    
     #initializer
     def __init__(self):
         try :
@@ -16,7 +17,9 @@ class SpeedMeter():
             f.close()
         except:
             pass
+        self.start()
 
+    #BLE디바이스 주소를 재설정하고 쓰레드를 다시 시작한다
     def setAddress(self, address):
         try :
             f = open("bledevice.cfg","w")
@@ -25,6 +28,8 @@ class SpeedMeter():
             self.address = address
         except:
             pass
+        self.stop()
+        self.start()
 
     #thread start
     def start(self):
@@ -74,6 +79,4 @@ class SpeedMeter():
         self.isStoped = True
 
 speedmeter = SpeedMeter()
-speedmeter.start()
-
 speedmeter.setAddress("noooooo")
