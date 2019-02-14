@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import threading
 
-class blinking():
+class TurnSignal():
     isStoped = True
     btn_Left = 21
     btn_Right = 20
@@ -40,6 +40,7 @@ class blinking():
                     self.direction = None
                     self.middle_func()
 
+
             if self.isStoped: #flag check
                 break
 
@@ -55,5 +56,5 @@ def blink_middle():
 def blink_right():
     print('---> 오른쪽')
 
-b = blinking(blink_left, blink_middle, blink_right)
-b.start()
+turn = TurnSignal(blink_left, blink_middle, blink_right)
+turn.start()

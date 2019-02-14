@@ -5,7 +5,7 @@
 import sys
 import BackCam
 import SpeedMeter
-import blink
+import TurnSignal
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -348,5 +348,5 @@ if __name__ == "__main__":
     layout.setContentsMargins(0, 0, 0, 0)
 
     window.showFullScreen()
-    
+
     sys.exit(app.exec_())
