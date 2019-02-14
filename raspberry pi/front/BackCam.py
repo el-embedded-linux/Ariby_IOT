@@ -11,8 +11,6 @@ class BackCam():
     #initializer
     def __init__(self, frameUpdate):
         self.frameUpdate = frameUpdate
-        self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
-        self.sock.bind( ('',8080) )
 
     #thread start
     def start(self):
@@ -24,6 +22,8 @@ class BackCam():
 
     def run(self):
         self.isStoped = False
+        self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+        self.sock.bind( ('',8080) )
         while True:
             #print('do')
             data , addr = self.sock.recvfrom(65535)
@@ -36,7 +36,8 @@ class BackCam():
 
             if self.isStoped: #flag check
                 break
-        cap.release()
+                
+        self.sock.close()
 
     def stop(self):
         self.isStoped = True
