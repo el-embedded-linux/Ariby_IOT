@@ -8,7 +8,7 @@ class SpeedMeter():
     isStoped = True
     callback = None
     address = "address"
-    
+
     #initializer
     def __init__(self):
         try :
@@ -41,18 +41,26 @@ class SpeedMeter():
 
     def run(self):
         hm10 = None
-        while hm10 == None:
-            try:
-                hm10 = BLEDevice(self.address)
-            except:
-                pass
-
         while True:
-            vh=hm10.getvaluehandle(b'dfb1')
-            data = hm10.notify()
-            if data is not None and self.func is not None:
-                self.func(data)
-            time.sleep(1)
+            #연결에 성공할때까지 반복
+            while hm10 == None:
+                try:
+                    hm10 = BLEDevice(self.address)
+                except:
+                    pass
+                    
+                if self.isStoped:
+                    break
+
+            #데이터 수신 실패하면 연결부터 다시
+            try:
+                vh=hm10.getvaluehandle(b'dfb1')
+                data = hm10.notify()
+                if data is not None and self.func is not None:
+                    self.func(data)
+                time.sleep(1)
+            except:
+                hm10 = None
 
             if self.isStoped:
                 break
