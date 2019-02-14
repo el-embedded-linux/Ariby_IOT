@@ -57,5 +57,3 @@ def blink_right():
 
 b = blinking(blink_left, blink_middle, blink_right)
 b.start()
-while True:
-    pass
