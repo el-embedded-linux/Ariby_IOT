@@ -15,7 +15,8 @@ def scanble(hci="hci0", timeout=1):
     while True:
         try:
             res = conn.expect(adr_pat)
-            output += conn.after
+            s = conn.after.decode('utf-8')
+            output += s + "\n"
         except pexpect.EOF:
             break
 
