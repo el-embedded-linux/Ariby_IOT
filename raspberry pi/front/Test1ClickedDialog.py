@@ -20,17 +20,16 @@ class Test1ClickedDialog(QDialog):
         self.test.setGeometry(0,0,200,200)
         self.test.setStyleSheet("background-color:rgba(255,255,255,0)")
 
-        speedmeter = SpeedMeter.SpeedMeter('F0:45:DA:10:B9:C1',self.SpeedUpdate)
-        speedmeter.start_b()
+        SpeedMeter.speedmeter.callback = self.SpeedUpdate #콜백함수 등록
+        SpeedMeter.speedmeter.start_b() #테스트용 쓰레드 시작
 
         self.showFullScreen()
 
 
-    def SpeedUpdate(self, data):
+    def SpeedUpdate(self, data): #속도 데이터 수신 콜백함수
         self.test.setText("test"+data)
         print(data)
 
 
     def back(self, frame):
         self.label.setPixmap(frame)
-

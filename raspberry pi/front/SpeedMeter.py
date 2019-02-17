@@ -60,8 +60,8 @@ class SpeedMeter():
             try:
                 vh=hm10.getvaluehandle(b'dfb1')
                 data = hm10.notify()
-                if data is not None and self.func is not None:
-                    self.func(data)
+                if data is not None and self.callback is not None:
+                    self.callback(data)
                 time.sleep(1)
             except:
                 self.isConnected = False
@@ -73,17 +73,16 @@ class SpeedMeter():
 
     #BLE디바이스 없는 상태에서 테스트를 진행하기위해 랜덤한 스피드값을 출력하는 쓰레드입니다.
     def start_b(self):
-        if self.isStoped:
-            t = threading.Thread(target=self.run_b, args=())
-            t.start()
-        else:
-            print("SpeedMeter 쓰레드는 한개만 생성 할 수 있습니다.")
+        self.isStoped = True
+        time.sleep(1)
+        t = threading.Thread(target=self.run_b, args=())
+        t.start()
 
     def run_b(self):
         self.isStoped = False
         while True:
             speed = random.randrange(0,30)
-            self.func(str(speed))
+            self.callback(str(speed))
             time.sleep(random.randrange(1,2))
 
             if self.isStoped:
@@ -91,4 +90,5 @@ class SpeedMeter():
 
     def stop(self):
         self.isStoped = True
+
 speedmeter = SpeedMeter()
