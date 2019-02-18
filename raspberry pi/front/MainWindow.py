@@ -5,6 +5,7 @@
 import sys
 import TurnSignal
 import Test1ClickedDialog
+import BleClickedDialog
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -265,7 +266,7 @@ class Main(QWidget):
 
     #이벤트 설정
     def test1Clicked(self, event):
-        lDig = Test1ClickedDialog.Test1ClickedDialog()
+        lDig = BleClickedDialog.BleClickedDialog()
         lDig.exec_()
 
     def test2Clicked(self, event):
