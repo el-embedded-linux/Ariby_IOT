@@ -286,7 +286,9 @@ class Main(QWidget):
         lDig.exec_()
 
     def test6Clicked(self, event):
-        sys.exit()
+        TurnSignal.turn.stop()
+        SpeedMeter.speedmeter.stop()
+        QCoreApplication.quit()
 
 
 if __name__ == "__main__":
