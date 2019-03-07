@@ -39,6 +39,12 @@ SAMBA 설치
     $sudo service samba restart 또는
     $sudo /etc/init.d/samba restart
 
+5인치 터치스크린용 드라이버 설치
+
+    git clone https://github.com/waveshare/LCD-show.git
+    sudo ./LCD5-show
+    
+
 
 라즈베리파이에 설치되는 opencv 페키지는 2.4버전으로 파이썬 2버전 까지만 지원되기때문에
 파이썬3에서 opencv 라이브러리를 설치하기 위해서는 opencv 3.x 버전을 설치해야한다
