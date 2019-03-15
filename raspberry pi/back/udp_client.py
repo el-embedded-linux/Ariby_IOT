@@ -18,7 +18,7 @@ while True:
     size = len(data)
     print(size)
     #stream = struct.pack(">L", size)+data
-    sock.sendto( data , ('127.0.0.1',8080) )
+    sock.sendto( data , ('192.168.100.1',8080) )
 
     print(img_counter)
     img_counter +=1
