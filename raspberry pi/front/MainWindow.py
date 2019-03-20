@@ -1,16 +1,13 @@
-# PyQt ProGramming Version 2
-# 1.프로그레스바(쓰레드) 2.gif이미지 movie 위젯 적용 3.스택위젯으로 화면 재구성(+추후 추가 예정) 4.페이드인, 페이드아웃
-# 5.날씨 아이콘 추가(크롤링 진행했었으나 블루투스 통신으로 이용할 지 상의 후 추가 예정) 6.라즈베리파이 마우스 커서 숨김
-
 import sys
-import TurnSignal
-import Test1ClickedDialog
+#import TurnSignal
+import Header
 import BleClickedDialog
+import RidingClickedDialog
+import ChkRecordingDialog
+import SpeedMeter
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from datetime import datetime
-import SpeedMeter
 
 
 #프로그레스바 설정
@@ -32,23 +29,6 @@ QProgressBar::chunk{
     width:10px;
 }
 """
-
-#스택위젯 클래스 생성
-class StackedWidget(QStackedWidget):
-    index = 0
-    def __init__(self, parent=None):
-        QStackedWidget.__init__(self, parent)
-
-    def setCurrentIndex(self, index):
-        self.fade = FadeWidget(self.currentWidget(), self.widget(index))
-        QStackedWidget.setCurrentIndex(self, index)
-
-    def setPage(self):
-        if self.index == 0 :
-            self.setCurrentIndex(1)
-            self.index = 1
-            window.setStyleSheet("background-color:rgb(41,41,41)")
-
 
 #프로그레스바 쓰레드
 class Thread(QThread):
@@ -75,6 +55,24 @@ class Thread(QThread):
             self.value.emit(self.count)
             self.msleep(10)
             self.mutex.unlock()
+
+
+#스택위젯 클래스 생성
+class StackedWidget(QStackedWidget):
+    index = 0
+    def __init__(self, parent=None):
+        QStackedWidget.__init__(self, parent)
+
+    def setCurrentIndex(self, index):
+        self.fade = FadeWidget(self.currentWidget(), self.widget(index))
+        QStackedWidget.setCurrentIndex(self, index)
+
+    def setPage(self):
+        if self.index == 0 :
+            self.setCurrentIndex(1)
+            self.index = 1
+            window.setStyleSheet("background-color:rgb(41,41,41)")
+            loading.th.terminate()
 
 
 #페이드인, 아웃용
@@ -161,66 +159,20 @@ class Main(QWidget):
         mainLayout = QVBoxLayout()
         self.setLayout(mainLayout)
 
-        self.titleWidget = QLabel()
-        self.titleWidget.setFixedHeight(60)
-        self.titleWidget.setStyleSheet("padding-top:10px;")
-
-        self.horizontalLayout = QHBoxLayout(self.titleWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-
-        self.titleSet()
+        self.header = Header.Header()
 
         self.timer = QTimer(self)
         self.timer.start(1000)
-        self.timer.timeout.connect(self.timeout)
-
-        self.gridLayout = QGridLayout()
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.addWidget(self.time, 1, 0)
-        self.gridLayout.addWidget(self.weather, 1, 1)
+        self.timer.timeout.connect(self.header.timeout)
 
         self.menuWidget = QLabel()
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.addWidget(self.aribyTitle)
-        self.horizontalLayout.addLayout(self.gridLayout)
 
         self.testAreaSet()
 
         mainLayout.setContentsMargins(0, 0, 0, 0)
-        mainLayout.addWidget(self.titleWidget)
+        mainLayout.addWidget(self.header.titleWidget)
         mainLayout.addWidget(self.menuWidget)
 
-    def timeout(self):
-        strTime = datetime.today().strftime("%Y.%m.%d. %H:%M ")
-        self.time.setText(self._translate("Main", strTime))
-
-    def titleSet(self):
-        self.font.setFamily("Arial")
-        self.font.setPointSize(24)
-        self.font.setWeight(50)
-
-        self.setWindowTitle(self._translate("Main", "ARIBY"))
-
-        self.aribyTitle = QLabel(self.titleWidget)
-        self.aribyTitle.setFont(self.font)
-        self.aribyTitle.setStyleSheet("color: rgb(106, 230, 197);")
-        self.aribyTitle.setText(self._translate("Main", "  ARIBY"))
-
-        self.font.setFamily("Bahnschrift Light")
-        self.font.setPointSize(13)
-
-        self.time = QLabel(self.titleWidget)
-        self.time.setFont(self.font)
-        self.time.setStyleSheet("color:white")
-        self.time.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.time.setFixedWidth(180)
-
-        self.weather = QLabel(self.titleWidget)
-        pix = QPixmap('Images/sunny.png')
-        self.weather.setPixmap(pix)
-        self.weather.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.weather.setFixedWidth(40)
-        self.weather.setStyleSheet("padding-right:20px;")
 
     def testAreaSet(self):
         self.gridLayout2 = QGridLayout(self.menuWidget)
@@ -230,33 +182,27 @@ class Main(QWidget):
         self.font.setPointSize(11)
         row = 0; col = 0
 
-        for i in range(0, 6, 1):
+        for i in range(0, 4, 1):
             self.menuLabel.append(QLabel(self.menuWidget))
             self.menuButton.append(QPushButton("test"))
             self.menuLayout = QGridLayout()
 
             if i == 0:
-                self.menuButton[i].setText("Bluetooth")
+                self.menuButton[i].setText("Riding")
                 self.menuButton[i].mousePressEvent = self.test1Clicked
             elif i == 1:
-                self.menuButton[i].setText("Riding")
+                self.menuButton[i].setText("Check Recoding")
                 self.menuButton[i].mousePressEvent = self.test2Clicked
             elif i == 2:
-                self.menuButton[i].setText("Check Recoding")
+                self.menuButton[i].setText("Bluetooth")
                 self.menuButton[i].mousePressEvent = self.test3Clicked
-            elif i == 3:
-                self.menuButton[i].setText("Settnigs")
+            else:
+                self.menuButton[i].setText("Test")
                 self.menuButton[i].mousePressEvent = self.test4Clicked
-            elif i == 4:
-                self.menuButton[i].setText("Help")
-                self.menuButton[i].mousePressEvent = self.test5Clicked
-            else :
-                self.menuButton[i].setText("Exit")
-                self.menuButton[i].mousePressEvent = self.test6Clicked
 
             self.menuLabel[i].setStyleSheet("margin:5px;")
-            self.menuButton[i].setStyleSheet("font:bold 16px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding:15px 3px; outline:0px;")
-            if (col == 3):
+            self.menuButton[i].setStyleSheet("font:bold 25px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
+            if (col == 2):
                 row = 1; col = 0
 
             self.gridLayout2.addWidget(self.menuLabel[i], row, col)
@@ -266,29 +212,21 @@ class Main(QWidget):
 
     #이벤트 설정
     def test1Clicked(self, event):
-        lDig = BleClickedDialog.BleClickedDialog()
+        lDig = RidingClickedDialog.RidingClickedDialog()
         lDig.exec_()
 
     def test2Clicked(self, event):
-        lDig = Test1ClickedDialog.Test1ClickedDialog()
+        lDig = ChkRecordingDialog.ChkRecordingDialog()
         lDig.exec_()
 
     def test3Clicked(self, event):
-        lDig = Test1ClickedDialog.Test1ClickedDialog()
+        lDig = BleClickedDialog.BleClickedDialog()
         lDig.exec_()
 
     def test4Clicked(self, event):
-        lDig = Test1ClickedDialog.Test1ClickedDialog()
-        lDig.exec_()
+        pass
 
-    def test5Clicked(self, event):
-        lDig = Test1ClickedDialog.Test1ClickedDialog()
-        lDig.exec_()
 
-    def test6Clicked(self, event):
-        TurnSignal.turn.stop()
-        SpeedMeter.speedmeter.stop()
-        QCoreApplication.quit()
 
 
 if __name__ == "__main__":
@@ -311,6 +249,6 @@ if __name__ == "__main__":
     layout.addWidget(stack)
     layout.setContentsMargins(0, 0, 0, 0)
 
-    window.showFullScreen()
+    window.show()
 
     sys.exit(app.exec_())
