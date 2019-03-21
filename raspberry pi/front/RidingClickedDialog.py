@@ -16,8 +16,8 @@ class RidingClickedDialog(QDialog):
         self.speed = QLabel(self)
         self.backButton = QPushButton(self)
 
-        self.frontCamera = BackCam.BackCam(self.back)
-        self.frontCamera.start()
+        self.backCamera = BackCam.BackCam(self.back)
+        self.backCamera.start()
 
         self.cameraLabel.setGeometry(0,0,800,480)
         self.speed.setGeometry(400,10,300,100)

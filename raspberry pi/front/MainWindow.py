@@ -214,6 +214,7 @@ class Main(QWidget):
     def test1Clicked(self, event):
         lDig = RidingClickedDialog.RidingClickedDialog()
         lDig.exec_()
+        lDig.backCamera.stop()
 
     def test2Clicked(self, event):
         lDig = ChkRecordingDialog.ChkRecordingDialog()

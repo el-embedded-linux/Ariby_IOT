@@ -36,7 +36,7 @@ class BackCam():
 
             if self.isStoped: #flag check
                 break
-                
+
         self.sock.close()
 
     def stop(self):
