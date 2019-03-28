@@ -11,67 +11,56 @@ class handtouchcheck(threading.Thread):
     
     ledPin = None
 
-    touchR = None
-    touchL = None
+    touchHand = None
     
     checkLED = False
     isStopped = False
 
 
-
-
+  
     def __init__(self, handon, handoff):    
         threading.Thread.__init__(self)
-        self.touchR = 23
-        self.touchL = 21
+        self.touchHand = 21
         self.ledPin = 27
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.touchR,GPIO.IN)
-        GPIO.setup(self.touchL,GPIO.IN)
+        GPIO.setup(self.touchHand,GPIO.IN)
         GPIO.setup(self.ledPin,GPIO.OUT)
         GPIO.output(self.ledPin, False)
 
         self.handon = handon
         self.handoff = handoff
 
+		def run(self):
+			while True :
+				print(GPIO.input(21))
+			for i in range(0,100):
+				sleep(0.01)
 
-    def run(self):
-        while True:
-            sumR = 0
-            sumL = 0
+	        	if GPIO.OUT == True :
+					self.time_stack = self.time_stack + 1
 
-            for i in range(0,50):
-                sumR += GPIO.input(self.touchR)
-                sumL += GPIO.input(self.touchL)
-                sleep(0.01)
-            
-            print('L:',sumL, '---R:',sumR)
-        
-            if sumR < 20 and sumL < 20 :
-               self.time_stack = self.time_stack + 1
+				else :
+					GPIO.output(self.ledPin, False)
 
-            else :
-                GPIO.output(self.ledPin, False)
+				if self.checkLED == True :
+					self.handoff()
+					self.checkLED = False
+					self.time_stack = 0
 
-                if self.checkLED == True :
-                    self.handoff()
-                    self.checkLED = False
+				if self.time_stack >= self.overtime :
+					GPIO.output(self.ledPin, True)
+					self.checkLED = True
+					self.handon() 
 
-                self.time_stack = 0
-            
-            ########
+				if self.isStopped:
+					break
 
+def _on():
+    #print("on")
+    pass
+def _off():
+    #print("off")
+    pass
 
-            if self.time_stack >= self.overtime :
-                GPIO.output(self.ledPin, True)
-                self.checkLED = True
-                self.handon() 
-
-
-
-            if self.isStopped:
-                break
-        
-
-
-
+handtouch = handtouchcheck(_on,_off)
+handtouch.start()
