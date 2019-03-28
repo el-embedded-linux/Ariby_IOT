@@ -1,5 +1,6 @@
 import threading
 from picamera import PiCamera
+from datetime import datetime
 
 class FrontCam():
     isStoped = True
@@ -19,8 +20,10 @@ class FrontCam():
             print("이미 녹화중입니다.")
 
     def run(self):
+        now = datetime.now()
+        filename = now.strftime('%y%m%d_%H%M%S')
         #TODO 파일명 날짜-시간으로 변경
-        self.camera.start_recording('Movie/video.h264')
+        self.camera.start_recording('Movie/'+filename+'.h264')
         print("start front camera recording")
         self.isStoped = False
         while True:
