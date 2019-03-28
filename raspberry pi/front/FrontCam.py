@@ -20,8 +20,7 @@ class FrontCam():
 
     def run(self):
         #TODO 파일명 날짜-시간으로 변경
-
-        self.camera.start_recording('/home/pi/video.h264')
+        self.camera.start_recording('Movie/video.h264')
         print("start front camera recording")
         self.isStoped = False
         while True:
@@ -34,3 +33,4 @@ class FrontCam():
 
     def stop(self):
         self.isStoped = True
+frontCamera = FrontCam()
