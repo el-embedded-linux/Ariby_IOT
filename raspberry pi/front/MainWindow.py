@@ -1,12 +1,10 @@
 import sys
-#import TurnSignal
+import TurnSignal
 import Header
 import BleClickedDialog
 import RidingClickedDialog
 import ChkRecordingDialog
 import SpeedMeter
-import BackCam
-import FrontCam
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -216,9 +214,7 @@ class Main(QWidget):
     def test1Clicked(self, event):
         lDig = RidingClickedDialog.RidingClickedDialog()
         lDig.exec_()
-        BackCam.backCamera.stop()
-        FrontCam.frontCamera.stop()
-        print("stoped")
+        lDig.backCamera.stop()
 
     def test2Clicked(self, event):
         lDig = ChkRecordingDialog.ChkRecordingDialog()
