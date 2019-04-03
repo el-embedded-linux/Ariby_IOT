@@ -1,6 +1,5 @@
-import sys
 import socket
-import MainWindow
+
  
 def runServer() : ## 서버열기
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) ## IP4v이기 때문에 AF_INET 사용

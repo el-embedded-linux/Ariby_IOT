@@ -2,7 +2,6 @@ import cv2
 import threading
 from PyQt5.QtGui import *
 import socket
-import struct
 import pickle
 
 class BackCam():

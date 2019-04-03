@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-import sys, time
-from bledevice import scanble, BLEDevice
+import time
+from bledevice import BLEDevice
 import threading
 import random
 

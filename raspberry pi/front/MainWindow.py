@@ -1,10 +1,16 @@
+# PyQt ProGramming Version 3
+# 1.일부 다이얼로그 라벨로 수정    2.헤더모듈화 완료    3.변수명 및 파일명 재명명    4.코드 병합, 정리
+# 5.메인으로 back 구현 완료    6.주행 중 터치 시 버튼 팝업&영상처리 진행중
+
+
 import sys
-import TurnSignal
+#import TurnSignal   #라파
+import BackCam
+#import FrontCam   #라파
 import Header
-import BleClickedDialog
-import RidingClickedDialog
-import ChkRecordingDialog
-import SpeedMeter
+#import BleClicked   #라파
+import RidingClicked
+import ChkRecordingClicked
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -165,16 +171,23 @@ class Main(QWidget):
         self.timer.start(1000)
         self.timer.timeout.connect(self.header.timeout)
 
-        self.menuWidget = QLabel()
+        self.menuStack = QStackedWidget()
 
-        self.testAreaSet()
+        self.menuWidget = QLabel()
+        self.menuAreaSet()
+        self.chkWidget = ChkRecordingClicked.ChkRecordingClicked(self)
+        #self.blueWidget = BleClicked.BleClicked(self)   #라파
+
+        self.menuStack.addWidget(self.menuWidget)
+        self.menuStack.addWidget(self.chkWidget)
+        #self.menuStack.addWidget(self.blueWidget)   #라파
 
         mainLayout.setContentsMargins(0, 0, 0, 0)
         mainLayout.addWidget(self.header.titleWidget)
-        mainLayout.addWidget(self.menuWidget)
+        mainLayout.addWidget(self.menuStack)
 
 
-    def testAreaSet(self):
+    def menuAreaSet(self):
         self.gridLayout2 = QGridLayout(self.menuWidget)
 
         self.menuLabel = []
@@ -184,21 +197,21 @@ class Main(QWidget):
 
         for i in range(0, 4, 1):
             self.menuLabel.append(QLabel(self.menuWidget))
-            self.menuButton.append(QPushButton("test"))
+            self.menuButton.append(QPushButton())
             self.menuLayout = QGridLayout()
 
             if i == 0:
                 self.menuButton[i].setText("Riding")
-                self.menuButton[i].mousePressEvent = self.test1Clicked
+                self.menuButton[i].mousePressEvent = self.ride
             elif i == 1:
                 self.menuButton[i].setText("Check Recoding")
-                self.menuButton[i].mousePressEvent = self.test2Clicked
+                self.menuButton[i].mousePressEvent = self.chkRec
             elif i == 2:
                 self.menuButton[i].setText("Bluetooth")
-                self.menuButton[i].mousePressEvent = self.test3Clicked
+                self.menuButton[i].mousePressEvent = self.blueCon
             else:
                 self.menuButton[i].setText("Test")
-                self.menuButton[i].mousePressEvent = self.test4Clicked
+                self.menuButton[i].mousePressEvent = self.test
 
             self.menuLabel[i].setStyleSheet("margin:5px;")
             self.menuButton[i].setStyleSheet("font:bold 25px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
@@ -211,23 +224,29 @@ class Main(QWidget):
             col += 1
 
     #이벤트 설정
-    def test1Clicked(self, event):
-        lDig = RidingClickedDialog.RidingClickedDialog()
+    def ride(self, event):
+        lDig = RidingClicked.RidingClicked()
         lDig.exec_()
-        lDig.backCamera.stop()
+        BackCam.backCamera.stop()
+        #FrontCam.frontCamera.stop()   #라파
+        print("stop")
 
-    def test2Clicked(self, event):
-        lDig = ChkRecordingDialog.ChkRecordingDialog()
-        lDig.exec_()
 
-    def test3Clicked(self, event):
-        lDig = BleClickedDialog.BleClickedDialog()
-        lDig.exec_()
+    def chkRec(self, event):
+        self.menuStack.setCurrentIndex(1)
 
-    def test4Clicked(self, event):
+
+    def blueCon(self, event):
         pass
+        #self.menuStack.setCurrentIndex(2)   #라파
 
 
+    def test(self, event):
+        pass
+        # self.menuStack.setCurrentIndex(3)
+
+    def changeStack(self):
+        self.menuStack.setCurrentIndex(0)
 
 
 if __name__ == "__main__":
