@@ -8,7 +8,7 @@ import sys
 import BackCam
 #import FrontCam   #라파
 import Header
-#import BleClicked   #라파
+import BleClicked   #라파
 import RidingClicked
 import ChkRecordingClicked
 from PyQt5.QtCore import *
@@ -176,11 +176,11 @@ class Main(QWidget):
         self.menuWidget = QLabel()
         self.menuAreaSet()
         self.chkWidget = ChkRecordingClicked.ChkRecordingClicked(self)
-        #self.blueWidget = BleClicked.BleClicked(self)   #라파
+        self.blueWidget = BleClicked.BleClicked(self)   #라파
 
         self.menuStack.addWidget(self.menuWidget)
         self.menuStack.addWidget(self.chkWidget)
-        #self.menuStack.addWidget(self.blueWidget)   #라파
+        self.menuStack.addWidget(self.blueWidget)   #라파
 
         mainLayout.setContentsMargins(0, 0, 0, 0)
         mainLayout.addWidget(self.header.titleWidget)
@@ -237,8 +237,8 @@ class Main(QWidget):
 
 
     def blueCon(self, event):
-        pass
-        #self.menuStack.setCurrentIndex(2)   #라파
+        #pass
+        self.menuStack.setCurrentIndex(2)   #라파
 
 
     def test(self, event):

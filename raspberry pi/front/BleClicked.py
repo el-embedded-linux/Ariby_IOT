@@ -37,7 +37,7 @@ class BleClicked(QLabel):
         self.connectLabel = QLabel("CONNECT", self)
         self.connectLabel.setGeometry(x+440, 420, 120, 50)
         self.connectLabel.setStyleSheet("font:bold 16px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding:15px 3px; outline:0px;")
-        self.connectLabel.mousePressEvent = self.exitEvent
+        self.connectLabel.mousePressEvent = forBack.changeStack
         self.connectLabel.setAlignment(Qt.AlignCenter)
         self.connectLabel.setVisible(False)
 
