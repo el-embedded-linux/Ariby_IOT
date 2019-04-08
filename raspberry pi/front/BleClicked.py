@@ -1,4 +1,6 @@
-import SpeedMeter
+import time
+import blscan
+import threading
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap, QMovie
@@ -9,77 +11,67 @@ class BleClicked(QLabel):
         super().__init__()
         self.formSetting(forBack)
 
+    def start(self):
+            t = threading.Thread(target=self.checkBoxState, args=())
+            t.start()
+
     def formSetting(self, forBack):
-        #좌표값
-        x = 40
-        y = 40
-        w = 400
-        h = 50
 
-        #초기화
-        self.bleBtn = {}
-        self.bleBtnAddr = {}
-        bleDeviceFindNum=0
+        #그룹박스
+        self.groupBox = QGroupBox("검색옵션")
+        #self.checkBox1 = QCheckBox('ble')
+        #self.checkBox1.stateChanged.connect(self.checkBoxState)
+        self.checkBox2 = QCheckBox('classic')
+        self.checkBox2.stateChanged.connect(self.checkBoxState)
 
-        #디바이스를 선택하기 전 공백처리
-        #tmpBle = []
+        #위젯추가
+        self.leftInnerLayOut = QVBoxLayout()
+        #self.leftInnerLayOut.addWidget(self.checkBox1)
+        self.leftInnerLayOut.addWidget(self.checkBox2)
+        self.groupBox.setLayout(self.leftInnerLayOut)
+        self.leftLayOut = QVBoxLayout()
+        self.leftLayOut.addWidget(self.groupBox)
+        self.groupBox.setStyleSheet("color:white;font-size:20px;border:0px;")
 
-        #디바이스를 5초간격으로 찾기
-        devices = SpeedMeter.scanble(timeout=5)
+        self.list = QListWidget(self)
+        self.list.setStyleSheet("color:white;font-size:20px;border:0px;QListWidget::item{border:1px solid red;};")
+        self.list.setFixedWidth(550)
+        self.list.setFixedHeight(330)
 
-        #뒷배경 삽입
-        self.backimg = QLabel()
-        pixmap = QPixmap('Images/ble.jpg')
-        self.backimg.setPixmap(pixmap)
-        self.backimg.setGeometry(0,0,800,480)
+        self.quitLabel = QLabel()
+        self.quitLabel.setFixedHeight(60)
+        self.quitLabel.setFixedWidth(760)
 
-        #연결하시겠습니까? 버튼 생성
-        self.connectLabel = QLabel("CONNECT", self)
-        self.connectLabel.setGeometry(x+440, 420, 120, 50)
-        self.connectLabel.setStyleSheet("font:bold 16px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding:15px 3px; outline:0px;")
-        self.connectLabel.mousePressEvent = forBack.changeStack
-        self.connectLabel.setAlignment(Qt.AlignCenter)
-        self.connectLabel.setVisible(False)
+        self.quitBtn = QPushButton("QUIT")
+        self.quitBtn.setFixedHeight(30)
+        self.quitBtn.setFixedWidth(70)
+        self.quitBtn.setStyleSheet("font:bold 14px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
+        self.quitBtn.clicked.connect(forBack.changeStack)
 
-        #나가기 버튼
-        self.closeLabel = QLabel("QUIT", self)
-        self.closeLabel.setGeometry(x+580, 420, 120, 50)
-        self.closeLabel.setStyleSheet("font:bold 16px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding:15px 3px; outline:0px;")
-        self.closeLabel.mousePressEvent = forBack.changeStack   #라파
-        self.closeLabel.setAlignment(Qt.AlignCenter)
+        self.quitLayout = QGridLayout()
+        self.quitLayout.setContentsMargins(0,0,0,0)
+        self.quitLayout.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.quitLayout.addWidget(self.quitBtn)
 
-        #선택된 디바이스 어드레스값 표출
-        self.selectLabel = QLabel("블루투스 기기를 선택하세요",self)
-        self.selectLabel.setGeometry(x+440, 40, 260, 100)
-        self.selectLabel.setStyleSheet("font:bold 16px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding:15px 3px; outline:0px;")
+        self.quitLabel.setLayout(self.quitLayout)
 
-        #gif 블루투스 애니메이션
-        self.bleGif = QLabel(self)
-        blebutton2 = QMovie('Images/blebutton.gif')
-        self.bleGif.setMovie(blebutton2)
-        blebutton2.start()
-        self.bleGif.move(480, 150)
-        self.bleGif.setVisible(False)
+        self.rightLayOut = QVBoxLayout()
+        self.rightLayOut.addWidget(self.list)
 
-        #디바이스 찾기 이벤트
-        for device in devices:
-            self.bleBtn[bleDeviceFindNum] = QPushButton(device['name'] + '\n' + device['addr'], self)
-            self.bleBtnAddr[bleDeviceFindNum] = device['addr']
-            self.bleBtn[bleDeviceFindNum].clicked.connect(lambda state, button = self.bleBtn[bleDeviceFindNum], addr = self.bleBtnAddr[bleDeviceFindNum] : self.clickedEvent(state, button, addr))
-            self.bleBtn[bleDeviceFindNum].setStyleSheet("background-color:rgb(106, 230, 197);")
-            self.bleBtn[bleDeviceFindNum].setGeometry(x,y,w,h)
-            bleDeviceFindNum += 1
-            y += 70
+        self.layout = QHBoxLayout()
+        self.layout.addLayout(self.leftLayOut)
+        self.layout.addLayout(self.rightLayOut)
+        self.layout.addWidget(self.quitLabel)
+        self.setLayout(self.layout)
+        #self.layout.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        #self.layout.setContentsMargins(0,0,0,0)
+        #self.setStyleSheet("background-color:rgb(41,41,41)")
 
-        #디바이스 어드레스값 설정
-        #SpeedMeter.speedmeter.setAddress()
+    def showDvice(self, device):
+        print(device)
+        self.list.addItem('%s' % device)
 
-        #디바이스가 설정되었는지 확인
-        #SpeedMeter.speedmeter.isConnected
-
-
-    def clickedEvent(self, state, button, addr):
-        #button = 디바이스 모든 정보값 / addr = 디바이스 주소값
-        self.selectLabel.setText(button.text() + '\n' + "가 선택되었습니다.")
-        self.bleGif.setVisible(True)
-        self.connectLabel.setVisible(True)
+    def checkBoxState(self):
+            #if self.checkBox1.isChecked() == True:
+            #    devices = blscan.scan.start(self.showDvice,'ble')
+        devices = blscan.scan.start(self.showDvice,'classic')
