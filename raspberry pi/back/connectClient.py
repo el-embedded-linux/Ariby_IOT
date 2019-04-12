@@ -1,9 +1,41 @@
-import socket
+from socket import *
+import threading
+import time
+import RPi.GPIO as GPIO
 
-def clientRun():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(('localhost', 4001))
-        s.sendall(b'Connected Client') ## str과 같은 문자열을 보낼 때는 b를 적고 써야한다.
+btn = 23
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(btn, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
-if __name__ == '__main__' :
-    clientRun()
+def send(sock):
+    sendData = ''
+    while True:
+        if GPIO.input(btn) :
+            sendData = 'Check!'
+        else :
+            sendData = ''
+        sock.send(sendData.encode('utf-8'))
+        time.sleep(1)
+
+def receive(sock):
+    while True:
+        recvData = sock.recv(1024)
+        print(recvData.decode('utf-8'))
+
+
+port = 8081
+
+clientSock = socket(AF_INET, SOCK_STREAM)
+clientSock.connect(('127.0.0.1', port))
+
+print('접속 완료')
+
+sender = threading.Thread(target=send, args=(clientSock,))
+receiver = threading.Thread(target=receive, args=(clientSock,))
+
+sender.start()
+receiver.start()
+
+while True:
+    time.sleep(1)
+    pass
