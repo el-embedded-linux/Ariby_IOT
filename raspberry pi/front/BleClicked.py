@@ -1,9 +1,7 @@
-import time
 import blscan
 import threading
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QPixmap, QMovie
 
 # 블루투스 스택위젯
 class BleClicked(QLabel):
