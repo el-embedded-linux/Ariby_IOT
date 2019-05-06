@@ -109,7 +109,7 @@ class PlayRecording(QDialog):
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
 
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile('C:/Users/user/EL_IOT/raspberry pi/front/Movie/' + fileName)))
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile('/home/pi/EL_IOT/raspberry pi/front/Movie/' + fileName)))
         self.mediaPlayer.play()
 
 
