@@ -269,6 +269,6 @@ if __name__ == "__main__":
     layout.addWidget(stack)
     layout.setContentsMargins(0, 0, 0, 0)
 
-    window.show()
+    window.showFullScreen()
 
     sys.exit(app.exec_())

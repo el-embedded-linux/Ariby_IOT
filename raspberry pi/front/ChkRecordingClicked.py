@@ -59,7 +59,6 @@ class PlayRecording(QDialog):
         self.formSetting(fileName)
 
     def formSetting(self, fileName):
-        self.resize(800, 480)
         self.setStyleSheet("background-color:rgb(41,41,41)")
 
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -111,6 +110,8 @@ class PlayRecording(QDialog):
 
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile('/home/pi/EL_IOT/raspberry pi/front/Movie/' + fileName)))
         self.mediaPlayer.play()
+
+        self.showFullScreen()
 
 
     def play(self):

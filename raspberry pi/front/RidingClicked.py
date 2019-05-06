@@ -10,7 +10,6 @@ class RidingClicked(QDialog):
         self.formSetting()
 
     def formSetting(self):
-        self.resize(800, 480)
         self.setStyleSheet("background-color:rgb(41,41,41)")
 
         self.cameraLabel = QLabel(self)
@@ -31,6 +30,7 @@ class RidingClicked(QDialog):
         SpeedMeter.speedmeter.callback = self.SpeedUpdate #콜백함수 등록
         SpeedMeter.speedmeter.start_b() #테스트용 쓰레드 시작
 
+        self.showFullScreen()
         #FrontCam.frontCamera.start()
 
 
