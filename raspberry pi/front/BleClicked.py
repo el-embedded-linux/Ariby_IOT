@@ -9,22 +9,17 @@ class BleClicked(QLabel):
         super().__init__()
         self.formSetting(forBack)
 
-    def start(self):
-            t = threading.Thread(target=self.checkBoxState, args=())
-            t.start()
-
     def formSetting(self, forBack):
-
         #그룹박스
         self.groupBox = QGroupBox("검색옵션")
-        #self.checkBox1 = QCheckBox('ble')
-        #self.checkBox1.stateChanged.connect(self.checkBoxState)
+        self.checkBox1 = QCheckBox('ble')
+        self.checkBox1.stateChanged.connect(self.checkBoxState)
         self.checkBox2 = QCheckBox('classic')
         self.checkBox2.stateChanged.connect(self.checkBoxState)
 
         #위젯추가
         self.leftInnerLayOut = QVBoxLayout()
-        #self.leftInnerLayOut.addWidget(self.checkBox1)
+        self.leftInnerLayOut.addWidget(self.checkBox1)
         self.leftInnerLayOut.addWidget(self.checkBox2)
         self.groupBox.setLayout(self.leftInnerLayOut)
         self.leftLayOut = QVBoxLayout()
@@ -61,15 +56,20 @@ class BleClicked(QLabel):
         self.layout.addLayout(self.rightLayOut)
         self.layout.addWidget(self.quitLabel)
         self.setLayout(self.layout)
-        #self.layout.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        #self.layout.setContentsMargins(0,0,0,0)
-        #self.setStyleSheet("background-color:rgb(41,41,41)")
+        self.layout.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.layout.setContentsMargins(0,0,0,0)
+        self.setStyleSheet("background-color:rgb(41,41,41)")
 
     def showDvice(self, device):
         print(device)
         self.list.addItem('%s' % device)
 
     def checkBoxState(self):
-            #if self.checkBox1.isChecked() == True:
-            #    devices = blscan.scan.start(self.showDvice,'ble')
-        devices = blscan.scan.start(self.showDvice,'classic')
+            if self.checkBox1.isChecked() == True:
+                devices = blscan.scan.start(self.showDvice,'ble')
+            else:
+                blscan.scan.stop()
+            if self.checkBox2.isChecked() == True:
+                devices = blscan.scan.start(self.showDvice,'classic')
+            else:
+                blscan.scan.stop()

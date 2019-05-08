@@ -11,20 +11,25 @@ class BluetoothScan():
             t = threading.Thread(target=self.run, args=(func, kind))
             t.start()
         else:
-            print("이미 녹화중입니다.")
+            print("이미 쓰레드가 실행중입니다.")
 
     def run(self, func, kind):
         self.isStoped = False
         while True:
             if kind == 'ble':
-                print("BLE device scanning...")
-                conn = pexpect.spawn("sudo hciconfig hci0 reset")
-                time.sleep(0.2)
-                conn = pexpect.spawn("sudo timeout 5 hcitool lescan")
-                time.sleep(0.2)
-                conn.expect("LE Scan \.+")
-                adr_pat = "(?P<addr>([0-9A-F]{2}:){5}[0-9A-F]{2}) (?P<name>.*)"
-                output = ""
+                try:
+                    print("BLE device scanning...")
+                    conn = pexpect.spawn("sudo hciconfig hci0 reset")
+                    time.sleep(0.2)
+                    conn = pexpect.spawn("sudo timeout 5 hcitool lescan")
+                    time.sleep(0.2)
+                    conn.expect("LE Scan \.+")
+                    adr_pat = "(?P<addr>([0-9A-F]{2}:){5}[0-9A-F]{2}) (?P<name>.*)"
+                    output = ""
+                except pexpect.EOF:
+                    print("예외")
+                    time.sleep(1)
+                    continue
 
                 while True:
                     try:
