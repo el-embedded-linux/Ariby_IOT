@@ -4,12 +4,12 @@ import time
 import RPi.GPIO as GPIO
 import TurnSignal as TS
 
-# 서버 연결
+# Server Connection
 def acceptServer() :
     connectionSock, addr = serverSock.accept()
     return connectionSock, addr
 
-# 후방쪽으로 신호를 보내는 함수
+# Send the Function back
 def sendBack(sock):
     sendData = ''
     while True:
@@ -27,26 +27,26 @@ def sendBack(sock):
         time.sleep(1)
 
 time.sleep(1)
-# 후방쪽에서 신호를 받는 함수
+# Receive a signal from behind
 def receiveBack(sock):
     while True:
         recvData = sock.recv(1024)
-        print('상대방 :', recvData.decode('utf-8'))
+        print('Back :', recvData.decode('utf-8'))
 
 
-port = 8081 # 포트번호
+port = 8081 # Port number
 
-#서버 연결설정
+# Server connection option
 serverSock = socket(AF_INET, SOCK_STREAM)
-serverSock.bind(('', port))
+serverSock.bind(('223.194.169.191', port))
 serverSock.listen(1)
 
-print('%d번 포트로 접속 대기중...'%port)
+print('Waiting for port %d...'%port)
 
 accepter = threading.Thread(target=acceptServer)
 connectionSock, addr = acceptServer()
 
-print(str(addr), '에서 접속되었습니다.')
+print(str(addr), ' are connected.')
 
 sender = threading.Thread(target=sendBack, args=(connectionSock,))
 receiver = threading.Thread(target=receiveBack, args=(connectionSock,))
