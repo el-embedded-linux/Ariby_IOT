@@ -26,7 +26,7 @@ def receive(sock):
 port = 8081
 
 clientSock = socket(AF_INET, SOCK_STREAM)
-clientSock.connect(('127.0.0.1', port))
+clientSock.connect(('223.194.169.191', port))
 
 print('접속 완료')
 
