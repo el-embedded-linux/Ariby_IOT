@@ -13,20 +13,29 @@ class BleClicked(QLabel):
 
     def formSetting(self, forBack):
         #그룹박스
-        self.groupBox = QGroupBox("검색옵션")
-        self.checkBox1 = QCheckBox('ble')
-        self.checkBox1.stateChanged.connect(self.checkBoxState)
-        self.checkBox2 = QCheckBox('classic')
-        self.checkBox2.stateChanged.connect(self.checkBoxState)
+        self.groupBoxOption = QGroupBox("검색옵션")
+        self.checkBoxBle = QCheckBox('Ble')
+        self.checkBoxBle.stateChanged.connect(self.checkBoxState)
+        self.checkBoxClassic = QCheckBox('Classic')
+        self.checkBoxClassic.stateChanged.connect(self.checkBoxState)
+
+        self.groupBoxConn = QGroupBox("연결된디바이스")
+        self.checkBoxConnDev = QCheckBox('ConnectDevice')
+        #self.checkBox1.stateChanged.connect(self.checkBoxState)
 
         #위젯추가
-        self.leftInnerLayOut = QVBoxLayout()
-        self.leftInnerLayOut.addWidget(self.checkBox1)
-        self.leftInnerLayOut.addWidget(self.checkBox2)
-        self.groupBox.setLayout(self.leftInnerLayOut)
+        self.leftInnerLayOut1 = QVBoxLayout()
+        self.leftInnerLayOut1.addWidget(self.checkBoxBle)
+        self.leftInnerLayOut1.addWidget(self.checkBoxClassic)
+        self.leftInnerLayOut2 = QVBoxLayout()
+        self.leftInnerLayOut2.addWidget(self.checkBoxConnDev)
+        self.groupBoxOption.setLayout(self.leftInnerLayOut1)
+        self.groupBoxConn.setLayout(self.leftInnerLayOut2)
         self.leftLayOut = QVBoxLayout()
-        self.leftLayOut.addWidget(self.groupBox)
-        self.groupBox.setStyleSheet("color:white;font-size:20px;border:0px;")
+        self.leftLayOut.addWidget(self.groupBoxOption)
+        self.leftLayOut.addWidget(self.groupBoxConn)
+        self.groupBoxOption.setStyleSheet("color:white;font-size:20px;border:0px;")
+        self.groupBoxConn.setStyleSheet("color:white;font-size:20px;border:0px;")
 
         self.list = QListWidget(self)
         self.list.setStyleSheet("color:white;font-size:20px;border:0px;QListWidget::item{border:1px solid red;};")
@@ -45,8 +54,11 @@ class BleClicked(QLabel):
         self.ConnBtn.setStyleSheet("font:bold 14px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
         self.ConnBtn.clicked.connect(self.connClicked)
 
+        self.statusLabel = QLabel("Bluetooth Connect")
+        self.statusLabel.setStyleSheet("font:bold 14px Arial; color:rgb(255,255,255);")
         self.quitLayout = QHBoxLayout()
         self.quitLayout.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.quitLayout.addWidget(self.statusLabel)
         self.quitLayout.addWidget(self.ConnBtn)
         self.quitLayout.addWidget(self.quitBtn)
 
@@ -70,15 +82,16 @@ class BleClicked(QLabel):
 
     def connClicked(self):
         self.pairDevice(self.itemSelect())
-        print("디바이스가 연결되었습니다.")
 
     def checkBoxState(self): #ble, classic 선택여부 판단
-            if self.checkBox1.isChecked() == True:
+            if self.checkBoxBle.isChecked() == True:
                 devices = blscan.scan.start(self.showDvice,'ble')
+                self.list.clear()
             else:
                 blscan.scan.stop()
-            if self.checkBox2.isChecked() == True:
+            if self.checkBoxClassic.isChecked() == True:
                 devices = blscan.scan.start(self.showDvice,'classic')
+                self.list.clear()
             else:
                 blscan.scan.stop()
 
@@ -90,12 +103,18 @@ class BleClicked(QLabel):
         return selectDevice
 
     def pairDevice(self, MacAdress): #bluetoothctl을 이용한 페어링
-        conn = pexpect.spawn("bluetoothctl", echo = False)
+        ctl = pexpect.spawn("bluetoothctl", echo = False)
         time.sleep(0.2)
-        conn.send("scan on" + "\n")
+        ctl.send("scan on" + "\n")
+        print("5초간 기다리세요")
+        time.sleep(5)
+        #conn.send("discoverable on" + "\n")
+        #time.sleep(0.2)
+        ctl.send("pair %s" % MacAdress + "\n")
         time.sleep(0.2)
-        conn.send("discoverable on" + "\n")
-        time.sleep(0.2)
-        conn.send("pair %s" % MacAdress + "\n")
-        time.sleep(0.2)
-        conn.expect("Pairing successful")
+        res = ctl.expect(["Failed to pair", "Pairing successful"])
+        status = True if res == 1 else False
+
+        if status == False:
+            print("다시 시도해주세요.")
+            self.statusLabel.setText("다시 시도해주세요.")
