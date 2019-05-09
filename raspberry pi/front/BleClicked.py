@@ -64,32 +64,15 @@ class BleClicked(QLabel):
         #self.layout.setContentsMargins(0,0,0,0)
         #self.setStyleSheet("background-color:rgb(41,41,41)")
 
-    def showDvice(self, device):
+    def showDvice(self, device): #리스트위젯에 아이템을 추가
         print(device)
         self.list.addItem('addr : ' + '%s' % device['addr'] + ' name : ' + '%s' % device['name'] )
 
     def connClicked(self):
-        self.itemSelect()
-        conn = pexpect.spawn("bluetoothctl", echo = False)
-        time.sleep(0.2)
-        conn.send("scan on" + "\n")
-        time.sleep(2)
-        conn.send("scan off" + "\n")
-        time.sleep(0.2)
-        conn.expect("Discovery stopped")
-        conn.send("agent on" + "\n")
-        time.sleep(0.2)
-        conn.expect("Agent registered")
-        conn.send("default-agent" + "\n")
-        time.sleep(0.2)
-        conn.expect("Default agent request successful")
-        conn.send("pair 00:F4:6F:7A:A7:98" + "\n")
-        time.sleep(0.2)
+        self.pairDevice(self.itemSelect())
+        print("디바이스가 연결되었습니다.")
 
-        #conn.expect("00:F4:6F:7A:A7:98")
-        print("aaa")
-
-    def checkBoxState(self):
+    def checkBoxState(self): #ble, classic 선택여부 판단
             if self.checkBox1.isChecked() == True:
                 devices = blscan.scan.start(self.showDvice,'ble')
             else:
@@ -99,7 +82,20 @@ class BleClicked(QLabel):
             else:
                 blscan.scan.stop()
 
-    def itemSelect(self):
+    def itemSelect(self): #리스트위젯에 선택된 아이템을 MacAdress만 추출하여 str로 리턴
         selectItem = [device.text() for device in self.list.selectedItems()]
         tmpStr = selectItem[0]
-        print(tmpStr[7:25])
+        print(tmpStr[7:24])
+        selectDevice = tmpStr[7:24]
+        return selectDevice
+
+    def pairDevice(self, MacAdress): #bluetoothctl을 이용한 페어링
+        conn = pexpect.spawn("bluetoothctl", echo = False)
+        time.sleep(0.2)
+        conn.send("scan on" + "\n")
+        time.sleep(0.2)
+        conn.send("discoverable on" + "\n")
+        time.sleep(0.2)
+        conn.send("pair %s" % MacAdress + "\n")
+        time.sleep(0.2)
+        conn.expect("Pairing successful")
