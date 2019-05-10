@@ -1,5 +1,5 @@
 import BackCam
-#import FrontCam   #라파
+import FrontCam   #라파
 import SpeedMeter
 from PyQt5.QtWidgets import *
 
@@ -31,7 +31,8 @@ class RidingClicked(QDialog):
         SpeedMeter.speedmeter.start_b() #테스트용 쓰레드 시작
 
         self.showFullScreen()
-        #FrontCam.frontCamera.start()
+        self.frontCamera = FrontCam.FrontCam()
+        self.frontCamera.start()
 
 
     def SpeedUpdate(self, data): #속도 데이터 수신 콜백함수
@@ -46,5 +47,6 @@ class RidingClicked(QDialog):
         self.cameraLabel.setPixmap(frame)
 
     def quit(self):
+        self.frontCamera.stop()
         SpeedMeter.speedmeter.stop()
         self.close()
