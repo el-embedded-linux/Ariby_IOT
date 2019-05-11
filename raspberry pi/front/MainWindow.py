@@ -2,18 +2,18 @@
 # 1.일부 다이얼로그 라벨로 수정    2.헤더모듈화 완료    3.변수명 및 파일명 재명명    4.코드 병합, 정리
 # 5.메인으로 back 구현 완료    6.주행 중 터치 시 버튼 팝업&영상처리 진행중
 
-
+import platform
 import sys
-import TurnSignal   #라파
-import BackCam
-import FrontCam   #라파
 import Header
-import BleClicked   #라파
 import RidingClicked
 import ChkRecordingClicked
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+if platform.system()=='Linux':
+    import TurnSignal   #라파
+    import FrontCam   #라파
+    import BleClicked   #라파
 
 
 #프로그레스바 설정
@@ -176,11 +176,13 @@ class Main(QWidget):
         self.menuWidget = QLabel()
         self.menuAreaSet()
         self.chkWidget = ChkRecordingClicked.ChkRecordingClicked(self)
-        self.blueWidget = BleClicked.BleClicked(self)   #라파
+        if platform.system()=='Linux':
+            self.blueWidget = BleClicked.BleClicked(self)   #라파
 
         self.menuStack.addWidget(self.menuWidget)
         self.menuStack.addWidget(self.chkWidget)
-        self.menuStack.addWidget(self.blueWidget)   #라파
+        if platform.system()=='Linux':
+            self.menuStack.addWidget(self.blueWidget)   #라파
 
         mainLayout.setContentsMargins(0, 0, 0, 0)
         mainLayout.addWidget(self.header.titleWidget)
@@ -227,7 +229,6 @@ class Main(QWidget):
     def ride(self, event):
         lDig = RidingClicked.RidingClicked()
         lDig.exec_()
-        BackCam.backCamera.stop()
         print("stop")
 
 
