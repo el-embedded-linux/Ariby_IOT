@@ -8,20 +8,15 @@ from PyQt5.QtMultimedia import *
 class ChkRecordingClicked(QLabel):
     def __init__(self, forBack):
         super().__init__()
+        self.list = QListWidget(self)
         self.formSetting(forBack)
 
     def recordTest(self, item):
         self.recordPlay = PlayRecording(item.text())
         self.recordPlay.exec_()
 
-    def formSetting(self, forBack):
-        self.layout = QVBoxLayout()
-        self.layout.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        self.layout.setContentsMargins(0,0,0,0)
-        self.setLayout(self.layout)
-        self.setStyleSheet("background-color:rgb(41,41,41)")
-
-        self.list = QListWidget(self)
+    def fileList(self):
+        self.list.clear()
         fileNames = os.listdir("Movie/")
 
         for fileName in fileNames:
@@ -31,6 +26,13 @@ class ChkRecordingClicked(QLabel):
         self.list.setStyleSheet("color:white;font-size:20px;border:0px;QListWidget::item{border:1px solid red;};")
         self.list.setFixedWidth(750)
         self.list.setFixedHeight(330)
+
+    def formSetting(self, forBack):
+        self.layout = QVBoxLayout()
+        self.layout.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.layout.setContentsMargins(0,0,0,0)
+        self.setLayout(self.layout)
+        self.setStyleSheet("background-color:rgb(41,41,41)")
 
         self.quitLabel = QLabel()
         self.quitLabel.setFixedHeight(60)
@@ -111,7 +113,7 @@ class PlayRecording(QDialog):
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile('/home/pi/EL_IOT/raspberry pi/front/Movie/' + fileName)))
         self.mediaPlayer.play()
 
-        self.showFullScreen()
+        self.show()
 
 
     def play(self):

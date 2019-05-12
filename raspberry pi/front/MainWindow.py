@@ -233,6 +233,7 @@ class Main(QWidget):
 
 
     def chkRec(self, event):
+        self.chkWidget.fileList()
         self.menuStack.setCurrentIndex(1)
 
 
