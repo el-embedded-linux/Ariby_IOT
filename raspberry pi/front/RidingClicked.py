@@ -74,7 +74,8 @@ class RidingClicked(QDialog):
 
     def paintEvent(self, QPaintEvent):
         painter = QPainter(self)
-        painter.drawImage(0,0,self.backCamera.image) # 카메라객체에 가장 최근 프레임을 그림
+        if self.backCamera.image != None:
+            painter.drawImage(0,0,self.backCamera.image) # 카메라객체에 가장 최근 프레임을 그림
 
 
     def quit(self):
