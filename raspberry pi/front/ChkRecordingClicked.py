@@ -113,7 +113,7 @@ class PlayRecording(QDialog):
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile('/home/pi/EL_IOT/raspberry pi/front/Movie/' + fileName)))
         self.mediaPlayer.play()
 
-        self.show()
+        self.showFullScreen()
 
 
     def play(self):
