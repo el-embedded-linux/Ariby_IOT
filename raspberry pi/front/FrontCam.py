@@ -8,7 +8,11 @@ class FrontCam():
 
     #initializer
     def __init__(self):
-        self.camera = PiCamera()
+        try:
+            self.camera = PiCamera()
+        except:
+            print("[FrontCam]전방 카메라 녹화를 시작하지 못했습니다.")
+            return
         self.camera.resolution = (1280, 720)
         self.camera.framerate = 24
         t = threading.Thread(target=self.run, args=())
@@ -18,7 +22,7 @@ class FrontCam():
         now = datetime.now()
         filename = now.strftime('%y%m%d_%H%M%S')
         self.camera.start_recording('Movie/recording.h264')
-        print("start front camera recording")
+        print("[FrontCam]전방 카메라 녹화를 시작합니다.")
         self.isStoped = False
         while True:
             if self.isStoped: #flag check
@@ -27,7 +31,7 @@ class FrontCam():
         self.camera.stop_recording()
         self.camera.close()
         os.system('avconv -r 25 -i '+'Movie/recording.h264'+' -vcodec copy '+'Movie/'+filename+'.mp4')
-        print("stop front camera recording")
+        print("[FrontCam]전방 카메라 녹화를 종료합니다.")
 
     def stop(self):
         self.isStoped = True
