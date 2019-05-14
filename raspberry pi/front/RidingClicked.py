@@ -1,5 +1,5 @@
 import platform
-import BackCam
+from BackCam import *
 if platform.system()=='Linux':
     import FrontCam
     import SpeedMeter
@@ -52,7 +52,7 @@ class RidingClicked(QDialog):
             SpeedMeter.speedmeter.callback = self.speedUpdate #콜백함수 등록
             SpeedMeter.speedmeter.start_b() #테스트용 쓰레드 시작
 
-        self.backCamera = BackCam.BackCam(self.frameUpdate) #카메라 객체 생성
+        backcam.frameUpdate = self.frameUpdate #영상 라벨 전달
         if platform.system()=='Linux':
             self.frontCamera = FrontCam.FrontCam() #카메라 객체 생성 & 녹화 시작
 
@@ -109,8 +109,8 @@ class RidingClicked(QDialog):
 
     def paintEvent(self, QPaintEvent):
         painter = QPainter(self)
-        if self.backCamera.image != None:
-            painter.drawImage(0,0,self.backCamera.image) # 카메라객체에 가장 최근 프레임을 그림
+        if backcam.image != None:
+            painter.drawImage(0,0,backcam.image) # 카메라객체에 가장 최근 프레임을 그림
 
 
     def quit(self):
@@ -118,5 +118,5 @@ class RidingClicked(QDialog):
         if platform.system()=='Linux':
             SpeedMeter.speedmeter.stop()
             self.frontCamera.stop()
-        self.backCamera.stop()
+        backcam.stop()
         self.close()
