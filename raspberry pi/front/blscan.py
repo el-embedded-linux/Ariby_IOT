@@ -1,6 +1,32 @@
 import pexpect
-import time
 import threading
+import re, time
+
+def scanble(hci="hci0", timeout=1):
+    conn = pexpect.spawn("sudo hciconfig %s reset" % hci)
+    time.sleep(0.2)
+
+    conn = pexpect.spawn("sudo timeout %d hcitool lescan" % timeout)
+    time.sleep(0.2)
+
+    conn.expect("LE Scan \.+", timeout=timeout)
+    output = ""
+    adr_pat = "(?P<addr>([0-9A-F]{2}:){5}[0-9A-F]{2}) (?P<name>.*)"
+    while True:
+        try:
+            res = conn.expect(adr_pat)
+            s = conn.after.decode('utf-8')
+            output += s + "\n"
+        except pexpect.EOF:
+            break
+
+    lines = re.split('\r?\n', output.strip())
+    lines = list(set(lines))
+    lines = [line for line in lines if re.match(adr_pat, line)]
+    lines = [re.match(adr_pat, line).groupdict() for line in lines]
+    lines = [line for line in lines if re.match('.*', line['name'])]
+
+    return lines
 
 class BluetoothScan():
     isStoped = True

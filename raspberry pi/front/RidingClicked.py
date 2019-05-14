@@ -50,8 +50,8 @@ class RidingClicked(QDialog):
 
         if platform.system() == 'Linux':
             SpeedMeter.speedmeter.callback = self.speedUpdate #콜백함수 등록
-            SpeedMeter.speedmeter.start_b() #테스트용 쓰레드 시작
-
+            SpeedMeter.speedmeter.start() #테스트용 쓰레드 시작
+            
         backcam.frameUpdate = self.frameUpdate #영상 라벨 전달
         if platform.system()=='Linux':
             self.frontCamera = FrontCam.FrontCam() #카메라 객체 생성 & 녹화 시작
