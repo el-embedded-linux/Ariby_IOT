@@ -3,7 +3,7 @@ import threading
 
 class AndroidBluetooth():
     callback = None
-
+    client_socket = None
     #initializer
     def __init__(self):
         server_socket=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
@@ -18,28 +18,34 @@ class AndroidBluetooth():
 
     def readyToConnect(self, server_socket):
         while True:
-            client_socket,address = server_socket.accept()
+            self.client_socket,address = server_socket.accept()
             print("안드로이드가 연결되었습니다.. : ",address)
-            clientConnected = threading.Thread(target=self.clientConnected, args=(client_socket,))
+            clientConnected = threading.Thread(target=self.clientConnected, args=())
             clientConnected.start()
 
-    def clientConnected(self, client_socket):
+    def clientConnected(self):
         while True:
             try:
-                data = client_socket.recv(1024)
+                data = self.client_socket.recv(1024)
                 dataToString = data.decode("utf-8")
                 if self.callback!=None:
                     self.callback(dataToString)
-
+                    self.send(dataToString)
                 if dataToString == "quit":
                     break
+
             except ConnectionError as err:
                 break
         print("안드로이드 연결이 종료되었습니다.")
-        client_socket.close()
+        self.client_socket.close()
+        self.client_socket = None
+
+    def send(self, text):
+        if self.client_socket!=None:
+            self.client_socket.send(text.encode("utf-8"))
 
 def func(data):
     print(data)
 
 androidBluetooth = AndroidBluetooth()
-androidBluetooth.setCallback(func)
+#androidBluetooth.setCallback(func)
