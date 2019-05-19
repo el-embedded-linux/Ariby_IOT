@@ -3,6 +3,7 @@ from BackCam import *
 if platform.system()=='Linux':
     import FrontCam
     import SpeedMeter
+    from AndroidBluetooth import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -51,10 +52,11 @@ class RidingClicked(QDialog):
         if platform.system() == 'Linux':
             SpeedMeter.speedmeter.callback = self.speedUpdate #콜백함수 등록
             SpeedMeter.speedmeter.start() #테스트용 쓰레드 시작
-            
-        backcam.frameUpdate = self.frameUpdate #영상 라벨 전달
-        if platform.system()=='Linux':
+            androidBluetooth.setCallback(self.BluetoothRead) #블루투스 Read 함수 전달
             self.frontCamera = FrontCam.FrontCam() #카메라 객체 생성 & 녹화 시작
+
+        backcam.frameUpdate = self.frameUpdate #영상 라벨 전달
+
 
         self.heartRateImage.setCacheMode(QMovie.CacheAll)
         self.heartRateImage.setSpeed(120)
@@ -112,6 +114,9 @@ class RidingClicked(QDialog):
         if backcam.image != None:
             painter.drawImage(0,0,backcam.image) # 카메라객체에 가장 최근 프레임을 그림
 
+    def BluetoothRead(self, text):
+        print(text)
+        #TODO text에 따라 다른 네비게이션이 표시되도록 수정
 
     def quit(self):
         self.heartRateImage.stop()
@@ -120,3 +125,4 @@ class RidingClicked(QDialog):
             self.frontCamera.stop()
         backcam.stop()
         self.close()
+        androidBluetooth.stop()

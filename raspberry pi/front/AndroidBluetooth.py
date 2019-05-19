@@ -44,6 +44,12 @@ class AndroidBluetooth():
         if self.client_socket!=None:
             self.client_socket.send(text.encode("utf-8"))
 
+    def stop(self):
+        if self.client_socket!=None:
+            self.send("quit")
+            self.client_socket.close()
+            self.client_socket = None
+
 def func(data):
     print(data)
 
