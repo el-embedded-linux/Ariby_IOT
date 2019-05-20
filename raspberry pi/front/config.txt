@@ -1,0 +1,5 @@
+BLE_ADDR=20:3f:df:d1:a2
+CDS=70
+UDP_PORT=8080
+TCP_PORT=8081
+VIDEO_PATH=/home/pi/EL_IOT/raspberry pi/front/Movie/
