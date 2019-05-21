@@ -6,6 +6,7 @@ import platform
 import sys
 import Header
 import RidingClicked
+import RidingLiteClicked
 import ChkRecordingClicked
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -178,11 +179,13 @@ class Main(QWidget):
         self.chkWidget = ChkRecordingClicked.ChkRecordingClicked(self)
         if platform.system()=='Linux':
             self.blueWidget = BleClicked.BleClicked(self)   #라파
+        self.liteWidget = RidingLiteClicked.RidingLiteClicked(self)
 
         self.menuStack.addWidget(self.menuWidget)
         self.menuStack.addWidget(self.chkWidget)
         if platform.system()=='Linux':
             self.menuStack.addWidget(self.blueWidget)   #라파
+        self.menuStack.addWidget(self.liteWidget)
 
         mainLayout.setContentsMargins(0, 0, 0, 0)
         mainLayout.addWidget(self.header.titleWidget)
@@ -211,9 +214,9 @@ class Main(QWidget):
             elif i == 2:
                 self.menuButton[i].setText("Bluetooth")
                 self.menuButton[i].mousePressEvent = self.blueCon
-            else:
-                self.menuButton[i].setText("Test")
-                self.menuButton[i].mousePressEvent = self.test
+            elif i == 3:
+                self.menuButton[i].setText("Lite")
+                self.menuButton[i].mousePressEvent = self.lite
 
             self.menuLabel[i].setStyleSheet("margin:5px;")
             self.menuButton[i].setStyleSheet("font:bold 25px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
@@ -236,15 +239,12 @@ class Main(QWidget):
         self.chkWidget.fileList()
         self.menuStack.setCurrentIndex(1)
 
-
     def blueCon(self, event):
         #pass
         self.menuStack.setCurrentIndex(2)   #라파
 
-
-    def test(self, event):
-        pass
-        # self.menuStack.setCurrentIndex(3)
+    def lite(self, event):
+        self.menuStack.setCurrentIndex(3)
 
     def changeStack(self):
         self.menuStack.setCurrentIndex(0)
@@ -270,6 +270,6 @@ if __name__ == "__main__":
     layout.addWidget(stack)
     layout.setContentsMargins(0, 0, 0, 0)
 
-    window.showFullScreen()
+    window.show()
 
     sys.exit(app.exec_())
