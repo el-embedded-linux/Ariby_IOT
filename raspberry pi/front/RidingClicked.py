@@ -66,7 +66,7 @@ class RidingClicked(QDialog):
         self.fontEffect(self.speed)
         self.fontEffect(self.heartRate)
         self.speedUpdate('10')
-        self.showFullScreen()
+        self.show()
 
     def fontEffect(self, item):
         effect = QGraphicsDropShadowEffect()
@@ -83,28 +83,31 @@ class RidingClicked(QDialog):
 
         self.heartRate.setText(dataOutput)   #심박수 완료 후 변경
 
-    def navUpdate(self, distance, direction):      #네비 테스트 완료 후 변경, 이미지 넣어야 함
+    def navUpdate(self, distance, direction):  # 네비 테스트 완료 후 변경, 이미지 넣어야 함
         if direction == 'right':
-            img = QPixmap('Images/sunny.png')
+            img = QPixmap('Images/right.png')
         elif direction == 'left':
-            img = QPixmap('Images/cloudy.png')
+            img = QPixmap('Images/left.png')
         elif direction == 'uturn':
             img = QPixmap('Images/rainny.png')
-        else :
-            img = QPixmap('Images/sunny.png')
-        self.distance.setText(str(distance)+'m')
+        else:
+            img = QPixmap('Images/straight.png')
+        self.distance.setText(str(distance) + 'm')
         self.direction.setPixmap(img)
 
-    def speedUpdate(self, data): #속도 데이터 수신 콜백함수
-        if int(data) < 10 :
-            dataOutput = '0' + data
-            self.navUpdate(100, 'right')  # 네비 완료 후 변경
-        else :
-            dataOutput = data
-            self.navUpdate(10, 'left')  # 네비 완료 후 변경
+    def speedUpdate(self, data):  # 속도 데이터 수신 콜백함수
+        dataOutput = data
 
-        self.heartRateUpdate(data)      #심박수 완료 후 변경
-        self.speed.setText(dataOutput+"km/h")
+        if int(data) < 10:
+            dataOutput = '0' + data
+            self.navUpdate(data, 'right')  # 네비 완료 후 변경
+        elif int(data) > 15:
+            self.navUpdate(data, 'straight')
+        else:
+            self.navUpdate(data, 'left')  # 네비 완료 후 변경
+
+        self.heartRateUpdate(data)  # 심박수 완료 후 변경
+        self.speed.setText(dataOutput + "km/h")
 
     def frameUpdate(self):
         self.cameraLabel.clear() # Label을 clear하여 paintEvent가 실행되도록 함
@@ -123,6 +126,7 @@ class RidingClicked(QDialog):
         if platform.system()=='Linux':
             SpeedMeter.speedmeter.stop()
             self.frontCamera.stop()
+            androidBluetooth.stop()
         backcam.stop()
         self.close()
-        androidBluetooth.stop()
+

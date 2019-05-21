@@ -234,13 +234,11 @@ class Main(QWidget):
         lDig.exec_()
         print("stop")
 
-
     def chkRec(self, event):
         self.chkWidget.fileList()
         self.menuStack.setCurrentIndex(1)
 
     def blueCon(self, event):
-        #pass
         self.menuStack.setCurrentIndex(2)   #라파
 
     def lite(self, event):
