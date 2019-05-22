@@ -24,6 +24,7 @@ class RidingClicked(QDialog):
         self.distance = QLabel(self)
         self.direction = QLabel(self)
         self.speed = QLabel(self)
+        self.kmh = QLabel(self)
         self.backButton = QPushButton(self)
 
         self.cameraLabel.setGeometry(0,0,800,480)
@@ -32,6 +33,7 @@ class RidingClicked(QDialog):
         self.distance.setGeometry(430, 35, 60, 20)
         self.direction.setGeometry(430, 55, 60, 40)
         self.speed.setGeometry(510,10,280,100)
+        self.kmh.setGeometry(650,20,120,80)
         self.backButton.setGeometry(712,428,70,30)
 
         self.heartRateScreen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -45,6 +47,7 @@ class RidingClicked(QDialog):
         self.distance.setStyleSheet("background-color:rgba(255,255,255,0);color:white;font:bold 16px Arial;")
         self.direction.setStyleSheet("background-color:rgba(255,255,255,0);")
         self.speed.setStyleSheet("background-color:rgba(255,255,255,0);color:white;font:bold 80px Arial;")
+        self.kmh.setStyleSheet("background-color:rgba(255,255,255,0);color:white;font:bold 40px Arial;")
         self.backButton.setText("Quit")
         self.backButton.setStyleSheet("font:bold 14px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
         self.backButton.clicked.connect(self.quit)
@@ -63,9 +66,13 @@ class RidingClicked(QDialog):
         self.heartRateScreen.setMovie(self.heartRateImage)
         self.heartRateImage.start()
 
+        self.kmh.setText("km/h")
+
         self.fontEffect(self.speed)
+        self.fontEffect(self.kmh)
+        self.fontEffect(self.distance)
         self.fontEffect(self.heartRate)
-        self.speedUpdate('10')
+        self.speedUpdate('11')
         self.show()
 
     def fontEffect(self, item):
@@ -77,7 +84,7 @@ class RidingClicked(QDialog):
 
     def heartRateUpdate(self, data):
         if int(data) < 10:
-            dataOutput = '0' + data
+            dataOutput = ' ' + data
         else:
             dataOutput = data
 
@@ -99,15 +106,12 @@ class RidingClicked(QDialog):
         dataOutput = data
 
         if int(data) < 10:
-            dataOutput = '0' + data
-            self.navUpdate(data, 'right')  # 네비 완료 후 변경
-        elif int(data) > 15:
-            self.navUpdate(data, 'straight')
-        else:
-            self.navUpdate(data, 'left')  # 네비 완료 후 변경
+            dataOutput = '    ' + data
+        elif int(data) < 100:
+            dataOutput = '  ' + data
 
         self.heartRateUpdate(data)  # 심박수 완료 후 변경
-        self.speed.setText(dataOutput + "km/h")
+        self.speed.setText(dataOutput)
 
     def frameUpdate(self):
         self.cameraLabel.clear() # Label을 clear하여 paintEvent가 실행되도록 함
@@ -119,6 +123,10 @@ class RidingClicked(QDialog):
 
     def BluetoothRead(self, text):
         print(text)
+
+        self.textList = text.split("/")
+        self.navUpdate(self.textList[0], self.textList[1])
+
         #TODO text에 따라 다른 네비게이션이 표시되도록 수정
 
     def quit(self):
