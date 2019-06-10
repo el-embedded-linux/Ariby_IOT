@@ -4,7 +4,7 @@ import time
 
 class TcpClient():
 
-    ADDRESS = '192.168.100.1'
+    ADDRESS = '223.194.169.139'
     PORT = 8081
     clientSock = None
     connecter = None

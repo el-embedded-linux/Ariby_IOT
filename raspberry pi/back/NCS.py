@@ -19,7 +19,7 @@ from imutils.video.filevideostream import FileVideoStream
 import imutils
 import pickle
 import zlib
-import udp_client
+import cam_client
 #from ReceiveLight import *
 
 lastresults = None
@@ -101,9 +101,7 @@ def camThread(LABELS, results, frameBuffer, camera_width, camera_height, vidfps,
         if cv2.waitKey(1)&0xFF == ord('q'):
             sys.exit(0)
 
-        result, color_image = cv2.imencode('.jpg', color_image, encode_param)
-        data = zlib.compress(pickle.dumps(color_image, 0))
-        udp_client.sendToFront(data)
+        cam_client.sendToFront(color_image)
 
         ## Print FPS
         framecount += 1
@@ -326,9 +324,9 @@ def getMessage(text):
 
 if __name__=="__main__":
 
-    from TcpClient import *
+    from back_udp_server import *
     from BackLedCntroller import *
-    tcpClient.setCallback(getMessage)
+    udp_server.getMessage = getMessage
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-vf','--video',dest='video_file_path',default="",help='Path to input video file. (Default="")')
