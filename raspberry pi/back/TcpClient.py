@@ -20,8 +20,12 @@ class TcpClient():
 
     def connect(self):
         self.clientSock = socket(AF_INET, SOCK_STREAM)
-        time.sleep(5)
+        connect_thread = threading.Thread(target=self.connect_thread, args=())
+        connect_thread.start()
+
+    def connect_thread(self):
         print("연결중입니다.")
+        time.sleep(5)
         self.clientSock.connect((self.ADDRESS, self.PORT))
         receiver = threading.Thread(target=self.receive, args=())
         receiver.start()
