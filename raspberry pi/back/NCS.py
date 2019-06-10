@@ -303,7 +303,7 @@ def overlay_on_image(frames, object_infos, LABELS):
         traceback.print_exc()
 
 
-if __name__ == '__main__':
+if True:
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-vf','--video',dest='video_file_path',default="",help='Path to input video file. (Default="")')
@@ -347,10 +347,8 @@ if __name__ == '__main__':
                        daemon=True)
         p.start()
         processes.append(p)
-
         while True:
             sleep(1)
-
     except:
         import traceback
         traceback.print_exc()
