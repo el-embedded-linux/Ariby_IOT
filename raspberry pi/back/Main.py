@@ -1,4 +1,5 @@
 from TcpClient import *
+from NCS import *
 from BackLedCntroller import *
 from ReceiveLight import *
 
