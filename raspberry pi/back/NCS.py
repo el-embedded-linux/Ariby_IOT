@@ -19,7 +19,8 @@ from imutils.video.filevideostream import FileVideoStream
 import imutils
 import pickle
 import zlib
-import udp_client
+import cam_client
+#from ReceiveLight import *
 
 lastresults = None
 threads = []
@@ -100,9 +101,7 @@ def camThread(LABELS, results, frameBuffer, camera_width, camera_height, vidfps,
         if cv2.waitKey(1)&0xFF == ord('q'):
             sys.exit(0)
 
-        result, color_image = cv2.imencode('.jpg', color_image, encode_param)
-        data = zlib.compress(pickle.dumps(color_image, 0))
-        udp_client.sendToFront(data)
+        cam_client.sendToFront(color_image)
 
         ## Print FPS
         framecount += 1
@@ -302,8 +301,32 @@ def overlay_on_image(frames, object_infos, LABELS):
         import traceback
         traceback.print_exc()
 
+def getMessage(text):
+    print(text)
+    if text == "led_right_on":
+        backLedCntroller.turn_on(backLedCntroller.LED_RIGHT)
+    if text == "led_left_on":
+        backLedCntroller.turn_on(backLedCntroller.LED_LEFT)
+    if text == "led_right_off":
+        backLedCntroller.turn_off(backLedCntroller.LED_RIGHT)
+    if text == "led_left_off":
+        backLedCntroller.turn_off(backLedCntroller.LED_LEFT)
+    if text == "break_on":
+        backLedCntroller.break_on()
+    if text == "break_off":
+        backLedCntroller.break_off()
+    if text == "emergency_on":
+        backLedCntroller.emergency_on()
+    if text == "emergency_off":
+        backLedCntroller.emergency_off()
 
-if True:
+
+
+if __name__=="__main__":
+
+    from back_udp_server import *
+    from BackLedCntroller import *
+    udp_server.getMessage = getMessage
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-vf','--video',dest='video_file_path',default="",help='Path to input video file. (Default="")')
