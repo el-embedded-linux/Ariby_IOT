@@ -22,6 +22,7 @@ class RidingClicked(QDialog):
         self.timerStart()
 
     def formSetting(self):
+
         self.setStyleSheet("background-color:rgb(41,41,41)")
 
         self.cameraLabel = QLabel(self)
@@ -164,17 +165,16 @@ class RidingClicked(QDialog):
         print(text)
         self.textList = text.split("/")
         self.navUpdate(self.textList[0], self.textList[1])
-
         #TODO text에 따라 다른 네비게이션이 표시되도록 수정
 
     def lwarning(self):
         global ltimer
         ltimer = threading.Timer(0.5, self.lwarning)
         if self.test == 1:
-            self.warningLeft.setStyleSheet("background-color:rgba(255,0,0,100);")
+            #self.warningLeft.setStyleSheet("background-color:rgba(255,0,0,100);")
             self.test = 0
         else :
-            self.warningLeft.setStyleSheet("background-color:rgba(255,0,0,0);")
+            #self.warningLeft.setStyleSheet("background-color:rgba(255,0,0,0);")
             self.test = 1
         ltimer.start()
 
@@ -182,10 +182,10 @@ class RidingClicked(QDialog):
         global rtimer
         rtimer = threading.Timer(0.5, self.rwarning)
         if self.test == 1:
-            self.warningRight.setStyleSheet("background-color:rgba(255,0,0,100);")
+            #self.warningRight.setStyleSheet("background-color:rgba(255,0,0,100);")
             self.test = 0
         else :
-            self.warningRight.setStyleSheet("background-color:rgba(255,0,0,0);")
+            #self.warningRight.setStyleSheet("background-color:rgba(255,0,0,0);")
             self.test = 1
         rtimer.start()
 
@@ -193,10 +193,10 @@ class RidingClicked(QDialog):
         global btimer
         btimer = threading.Timer(0.5, self.bwarning)
         if self.test == 1:
-            self.warningBack.setStyleSheet("background-color:rgba(255,0,0,100);")
+            #self.warningBack.setStyleSheet("background-color:rgba(255,0,0,100);")
             self.test = 0
         else:
-            self.warningBack.setStyleSheet("background-color:rgba(255,0,0,0);")
+            #self.warningBack.setStyleSheet("background-color:rgba(255,0,0,0);")
             self.test = 1
         btimer.start()
 
@@ -219,4 +219,3 @@ class RidingClicked(QDialog):
         backcam.stop()
         self.warningStop('right')
         self.close()
-

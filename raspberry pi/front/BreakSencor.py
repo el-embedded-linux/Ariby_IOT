@@ -1,50 +1,30 @@
 import RPi.GPIO as GPIO
 import time
-import threading
+from front_udp_client import *
 
-class BreakCheck(threading.Thread):
-	left_break = None ## 왼쪽 브레이크
-	right_break = None ## 오른쪽 브레이크
+class BreakCheck():
+	left_break = 21 ## 왼쪽 브레이크
+	right_break = 20 ## 오른쪽 브레이크
+	BREAK_VCC = 16 ## 브래이크 VCC
 	isStopped = False ## 브레이크체크 끝내기
-	
+
 	time_Stack = 0
-	
-	
-	def __init__(self, left_b, right_b) :
-		threading.Thread.__init__(self)
-		self.left_break = 23
-		self.right_break = 24
-		
+
+	def __init__(self):
 		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(self.BREAK_VCC, GPIO.OUT)
 		GPIO.setup(self.left_break, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 		GPIO.setup(self.right_break, GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
-		
-		self.left_b = left_b
-		self.right_b = right_b
-	
-	def run(self):
-		while True :
-			#print(self.time_Stack)
-			#print(GPIO.input(self.left_break), "    |    ", GPIO.input(self.right_break))
-			if (self.time_Stack > 2) :
-				if GPIO.input(self.left_break) == False or GPIO.input(self.right_break) == False :
-					print ("Break!!")
-					self.time_Stack = 0
-				
-			
-			time.sleep(0.1)
-			self.time_Stack += 1
-			
-			if self.isStopped:
-				break
-				
-				
-def left_b():
-	pass
-	
-def right_b():
-	pass
-	
-BreakCheck = BreakCheck(left_b, right_b)
-BreakCheck.start()
-	
+		GPIO.add_event_detect(self.left_break, GPIO.BOTH, callback=self.break_run, bouncetime=20)
+		GPIO.add_event_detect(self.right_break, GPIO.BOTH, callback=self.break_run, bouncetime=20)
+		GPIO.output(self.BREAK_VCC, GPIO.HIGH)
+
+	def break_run(self,pin):
+		if GPIO.input(self.left_break)==False or GPIO.input(self.right_break)==False:
+			sendToBack("break_on")
+		elif GPIO.input(self.left_break)==True and GPIO.input(self.right_break)==True:
+			sendToBack("break_off")
+
+
+
+BreakCheck = BreakCheck()

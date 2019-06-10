@@ -72,7 +72,3 @@ class TcpServer():
 
 tcpServer = TcpServer()
 tcpServer.create()
-
-while True:
-    text = input()
-    tcpServer.send(text)
