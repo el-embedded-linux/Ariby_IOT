@@ -2,30 +2,34 @@ from socket import *
 import threading
 import time
 
-
 class TcpClient():
 
-    ADDRESS = '192.168.0.2'
+    ADDRESS = '192.168.100.1'
     PORT = 8081
     clientSock = None
     connecter = None
     isconnect = False
+    isconnecting = False
     func = None
 
     def __init__(self):
-        pass
+        self.connect()
 
     def setCallback(self, func):
         self.func = func
 
     def connect(self):
+        time.sleep(5)
+        try:
+            self.clientSock.close()
+        except:
+            pass
         self.clientSock = socket(AF_INET, SOCK_STREAM)
         connect_thread = threading.Thread(target=self.connect_thread, args=())
         connect_thread.start()
 
     def connect_thread(self):
-        print("연결중입니다.")
-        time.sleep(5)
+        print("connecting....")
         self.clientSock.connect((self.ADDRESS, self.PORT))
         receiver = threading.Thread(target=self.receive, args=())
         receiver.start()
@@ -55,4 +59,3 @@ class TcpClient():
                 self.send('pong')
 
 tcpClient = TcpClient()
-tcpClient.connect()

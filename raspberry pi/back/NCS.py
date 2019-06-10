@@ -20,6 +20,7 @@ import imutils
 import pickle
 import zlib
 import udp_client
+#from ReceiveLight import *
 
 lastresults = None
 threads = []
@@ -302,8 +303,32 @@ def overlay_on_image(frames, object_infos, LABELS):
         import traceback
         traceback.print_exc()
 
+def getMessage(text):
+    print(text)
+    if text == "led_right_on":
+        backLedCntroller.turn_on(backLedCntroller.LED_RIGHT)
+    if text == "led_left_on":
+        backLedCntroller.turn_on(backLedCntroller.LED_LEFT)
+    if text == "led_right_off":
+        backLedCntroller.turn_off(backLedCntroller.LED_RIGHT)
+    if text == "led_left_off":
+        backLedCntroller.turn_off(backLedCntroller.LED_LEFT)
+    if text == "break_on":
+        backLedCntroller.break_on()
+    if text == "break_off":
+        backLedCntroller.break_off()
+    if text == "emergency_on":
+        backLedCntroller.emergency_on()
+    if text == "emergency_off":
+        backLedCntroller.emergency_off()
 
-if True:
+
+
+if __name__=="__main__":
+
+    from TcpClient import *
+    from BackLedCntroller import *
+    tcpClient.setCallback(getMessage)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-vf','--video',dest='video_file_path',default="",help='Path to input video file. (Default="")')

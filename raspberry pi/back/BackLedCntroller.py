@@ -6,8 +6,8 @@ class BackLedCntroller():
 
     #LED 포트 번호
     LED_LEFT = 21
-    LED_RIGHT = 20
-    LED_BREAK = 16
+    LED_RIGHT = 16
+    LED_BREAK = 20
 
     #LED 상태 변수
     led_left_on = False
@@ -124,7 +124,7 @@ class BackLedCntroller():
 
 backLedCntroller = BackLedCntroller()
 
-if __name__ == "__main__"
+if __name__ == "__main__":
     while True:
         text = input()
         if text == "ron":
