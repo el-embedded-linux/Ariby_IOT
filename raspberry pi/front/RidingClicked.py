@@ -1,7 +1,7 @@
 import platform
 from BackCam import *
 if platform.system()=='Linux':
-    import FrontCam
+    #import FrontCam
     import SpeedMeter
     from AndroidBluetooth import *
 from PyQt5.QtWidgets import *
@@ -70,7 +70,7 @@ class RidingClicked(QDialog):
             SpeedMeter.speedmeter.callback = self.speedUpdate #콜백함수 등록
             SpeedMeter.speedmeter.start() #테스트용 쓰레드 시작
             androidBluetooth.setCallback(self.BluetoothRead) #블루투스 Read 함수 전달
-            self.frontCamera = FrontCam.FrontCam() #카메라 객체 생성 & 녹화 시작
+            #self.frontCamera = FrontCam.FrontCam() #카메라 객체 생성 & 녹화 시작
 
         backcam.frameUpdate = self.frameUpdate #영상 라벨 전달
 
@@ -163,7 +163,7 @@ class RidingClicked(QDialog):
         self.timerStop()
         if platform.system()=='Linux':
             SpeedMeter.speedmeter.stop()
-            self.frontCamera.stop()
+            #self.frontCamera.stop()
             androidBluetooth.stop()
         backcam.stop()
         self.close()

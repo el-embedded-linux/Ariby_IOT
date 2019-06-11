@@ -8,7 +8,7 @@ class BackCam():
     data = None
     image = None
     frameUpdate = None
-
+    pos = None
     #initializer
     def __init__(self):
         self.backcam_sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
@@ -20,7 +20,16 @@ class BackCam():
         while True:
             self.data , self.addr = self.backcam_sock.recvfrom(65535)
             self.data = pickle.loads(self.data, fix_imports=True, encoding="bytes")
+
             self.data = cv2.imdecode(self.data, cv2.IMREAD_COLOR)
+            self.data = cv2.cvtColor(self.data, cv2.COLOR_BGR2RGB) # BGR TO RGB
+
+            if self.pos != None:
+                alpha = 0.5
+                output = self.data.copy()
+                self.data = cv2.circle(self.data, (self.pos[0],self.pos[1]), self.pos[2], (255, 0, 0, 128), -1)
+                self.data = cv2.addWeighted(self.data, alpha, output, 1 - alpha, 0, output)
+                self.pos = None
             self.data = cv2.resize(self.data, dsize=(800, 480), interpolation=cv2.INTER_AREA) #라즈베리파이 스크린 사이즈에 맞게 RESIZE
             self.image = QImage(self.data, self.data.shape[1], self.data.shape[0], self.data.shape[1] * 3,QImage.Format_RGB888) #create QIamge
             if self.frameUpdate != None:

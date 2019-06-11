@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import *
 if platform.system()=='Linux':
     import BreakSencor
     import FrontLedController
+    import front_udp_server
     import FrontCam   #라파
     import BleClicked   #라파
 
