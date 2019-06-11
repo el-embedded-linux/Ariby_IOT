@@ -23,33 +23,38 @@ class BackLedCntroller():
     #깜빡임 간격
     BLINKTIME = 0.5
 
+    dis = "off"
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.LED_LEFT, GPIO.OUT)
         GPIO.setup(self.LED_RIGHT, GPIO.OUT)
         GPIO.setup(self.SWITCH_LEFT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(self.SWITCH_RIGHT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(self.SWITCH_LEFT, GPIO.BOTH, callback=self.select_led, bouncetime=400)
-        GPIO.add_event_detect(self.SWITCH_RIGHT, GPIO.BOTH, callback=self.select_led, bouncetime=400)
+        select_led_t = threading.Thread(target=self.select_led)
+        select_led_t.start()
 
 
-    def select_led(self, pin):
-        print("************************************************")
-        if GPIO.input(self.SWITCH_LEFT)==True:
-            self.turn_on(self.LED_RIGHT)
-            self.turn_off(self.LED_LEFT)
-            sendToBack("led_right_on")
-            sendToBack("led_left_off")
-        elif GPIO.input(self.SWITCH_RIGHT)==True:
-            self.turn_on(self.LED_LEFT)
-            self.turn_off(self.LED_RIGHT)
-            sendToBack("led_left_on")
-            sendToBack("led_right_off")
-        else:
-            self.turn_off(self.LED_LEFT)
-            self.turn_off(self.LED_RIGHT)
-            sendToBack("led_left_off")
-            sendToBack("led_right_off")
+    def select_led(self):
+        while True:
+            if GPIO.input(self.SWITCH_LEFT)==True and self.dis != "left":
+                self.dis = "left"
+                self.turn_on(self.LED_RIGHT)
+                self.turn_off(self.LED_LEFT)
+                sendToBack("led_right_on")
+                sendToBack("led_left_off")
+            elif GPIO.input(self.SWITCH_RIGHT)==True and self.dis != "right":
+                self.dis = "right"
+                self.turn_on(self.LED_LEFT)
+                self.turn_off(self.LED_RIGHT)
+                sendToBack("led_left_on")
+                sendToBack("led_right_off")
+            elif GPIO.input(self.SWITCH_RIGHT)==False and GPIO.input(self.SWITCH_LEFT)==False and self.dis != "off":
+                self.dis = "off"
+                self.turn_off(self.LED_LEFT)
+                self.turn_off(self.LED_RIGHT)
+                sendToBack("led_left_off")
+                sendToBack("led_right_off")
+            time.sleep(0.1)
 
 
     #깜빡이 제어

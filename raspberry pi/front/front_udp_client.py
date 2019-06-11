@@ -6,4 +6,4 @@ def sendToBack(data):
     size = len(data)
     print(data)
     #stream = struct.pack(">L", size)+data
-    front_udp_client_socket.sendto( data.encode('utf-8') , ('192.168.100.2',8081) )
+    front_udp_client_socket.sendto( data.encode('utf-8') , ('223.194.169.182',8081) )

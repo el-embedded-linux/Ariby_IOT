@@ -3,6 +3,8 @@ import threading
 import random
 import re, time
 import pexpect
+from config import *
+
 
 class BLEDevice:
     def __init__(self, addr=None):
@@ -75,23 +77,12 @@ class SpeedMeter():
 
     #initializer
     def __init__(self):
-        try :
-            f = open("bledevice.cfg","r")
-            self.address = f.read()
-            f.close()
-        except:
-            pass
+        self.address =config.get("BLE_ADDR")
         self.start()
 
     #BLE디바이스 주소를 재설정하고 쓰레드를 다시 시작한다
     def setAddress(self, address):
-        try :
-            f = open("bledevice.cfg","w")
-            f.write(address)
-            f.close()
-            self.address = address
-        except:
-            pass
+        self.address =config.set("BLE_ADDR",address)
         self.stop()
         self.start()
 
@@ -123,13 +114,14 @@ class SpeedMeter():
             try:
                 vh=hm10.getvaluehandle(b'dfb1')
                 data = hm10.notify()
-                if data is not None and self.callback is not None:
-                    self.callback(data)
-                time.sleep(1)
+
             except:
                 self.isConnected = False
                 hm10 = None
-
+            print(data)
+            if data != None and self.callback != None:
+                self.callback(data)
+            time.sleep(1)
             if self.isStoped:
                 self.isConnected = False
                 break
