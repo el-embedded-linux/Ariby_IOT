@@ -21,7 +21,6 @@ import pickle
 import zlib
 import cam_client
 import back_udp_client
-#from ReceiveLight import *
 
 lastresults = None
 threads = []
@@ -325,6 +324,7 @@ def getMessage(text):
 
 if __name__=="__main__":
 
+    from ReceiveLight import *
     from back_udp_server import *
     from BackLedCntroller import *
     udp_server.getMessage = getMessage
