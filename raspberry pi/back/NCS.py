@@ -20,7 +20,7 @@ import imutils
 import pickle
 import zlib
 import cam_client
-#from ReceiveLight import *
+import back_udp_client
 
 lastresults = None
 threads = []
@@ -34,8 +34,8 @@ detectframecount = 0
 time1 = 0
 time2 = 0
 cam = None
-camera_width = 320
-camera_height = 180
+camera_width = 640
+camera_height = 360
 window_name = ""
 ssd_detection_mode = 1
 face_detection_mode = 0
@@ -274,8 +274,8 @@ def overlay_on_image(frames, object_infos, LABELS):
                 """
                 object_name = LABEL[int(class_id)]
                 if object_name=='car':
-                    pos = "[{0},{1},{2},{3}]".format(box_top,box_left,box_bottom,box_right)
-                    print(pos)
+                    pos = "car,{0},{1},{2},{3}".format(box_top,box_left,box_bottom,box_right)
+                    back_udp_client.sendToFront(pos)
 
                 box_color = (255, 128, 0)
                 box_thickness = 1
@@ -324,6 +324,7 @@ def getMessage(text):
 
 if __name__=="__main__":
 
+    from ReceiveLight import *
     from back_udp_server import *
     from BackLedCntroller import *
     udp_server.getMessage = getMessage

@@ -29,21 +29,24 @@ class BackLedCntroller():
 
     #브레이크 제어
     def break_on(self):
-        led_break_on = True
+        self.led_break_on = True
         GPIO.output(self.LED_BREAK, GPIO.HIGH)
 
     def break_off(self):
-        led_break_on = False
+        self.led_break_on = False
         GPIO.output(self.LED_BREAK, GPIO.LOW)
 
     #브레이크 제어
     def break_night_on(self):
-        self.turn_off(self.LED_LEFT)
+        if(self.led_night_on == True):
+            return
+        else:
+            self.led_night_on = True
         t = threading.Thread(target=self.break_night_thread, args=())
         t.start()
 
     def break_night_off(self):
-        led_night_on = False
+        self.led_night_on = False
 
 
 
@@ -110,15 +113,15 @@ class BackLedCntroller():
                 break
 
     def break_night_thread(self):
-        self.led_night_on = True
         while True:
+            time.sleep(0.000001)
             GPIO.output(self.LED_BREAK, GPIO.LOW)
-            time.sleep(0.05)
+            time.sleep(0.009999)
             GPIO.output(self.LED_BREAK, GPIO.HIGH)
-            time.sleep(0.05)
-            while led_break_on == True:
+            while self.led_break_on == True:
                 pass
-            if led_night_on == False:
+            if self.led_night_on == False:
+                GPIO.output(self.LED_BREAK, GPIO.LOW)
                 break
 
 
@@ -143,3 +146,7 @@ if __name__ == "__main__":
             backLedCntroller.emergency_on()
         if text == "emeroff":
             backLedCntroller.emergency_off()
+        if text == "night":
+            backLedCntroller.break_night_on()
+        if text == "day":
+            backLedCntroller.break_night_off()
