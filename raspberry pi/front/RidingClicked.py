@@ -22,12 +22,10 @@ class RidingClicked(QDialog):
         self.timerStart()
 
     def formSetting(self):
+
         self.setStyleSheet("background-color:rgb(41,41,41)")
 
         self.cameraLabel = QLabel(self)
-        self.warningLeft = QLabel(self)
-        self.warningRight = QLabel(self)
-        self.warningBack = QLabel(self)
         self.heartRateImage = QMovie("Images/heart.gif", QByteArray(), self)
         self.heartRateScreen = QLabel(self)
         self.heartRate = QLabel(self)
@@ -40,9 +38,6 @@ class RidingClicked(QDialog):
         self.backButton = QPushButton(self)
 
         self.cameraLabel.setGeometry(0,0,800,480)
-        self.warningLeft.setGeometry(0,140,150,200)
-        self.warningRight.setGeometry(650,140,150,200)
-        self.warningBack.setGeometry(0,0,800,480)
         self.heartRateScreen.setGeometry(15,20,80,80)
         self.heartRate.setGeometry(100,10,150,100)
         self.distance.setGeometry(490, 32, 60, 20)
@@ -59,9 +54,6 @@ class RidingClicked(QDialog):
         self.direction.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
         self.cameraLabel.setStyleSheet("background-color:rgba(255,255,255,0)")
-        self.warningLeft.setStyleSheet("background-color:rgba(255,255,255,0);")
-        self.warningRight.setStyleSheet("background-color:rgba(255,255,255,0);")
-        self.warningBack.setStyleSheet("background-color:rgba(255,255,255,0);")
         self.heartRate.setStyleSheet("background-color:rgba(255,255,255,0);color:white;font:bold 80px Arial;")
         self.heartRateScreen.setStyleSheet("background-color:rgba(255,255,255,0)")
         self.distance.setStyleSheet("background-color:rgba(255,255,255,0);color:white;font:bold 16px Arial;")
@@ -95,7 +87,6 @@ class RidingClicked(QDialog):
         self.fontEffect(self.heartRate)
         self.fontEffect(self.ridingDistance)
         self.fontEffect(self.ridingTime)
-        self.speedUpdate('11')
         self.show()
 
     def timerStart(self):
@@ -141,6 +132,7 @@ class RidingClicked(QDialog):
 
     def speedUpdate(self, data):  # 속도 데이터 수신 콜백함수
         self.receiveSpeedCount += 1
+        data = str(int(float(data[:-2])))
         dataOutput = data
 
         if int(data) < 10:
@@ -150,7 +142,6 @@ class RidingClicked(QDialog):
         self.heartRateUpdate(data)  # 심박수 완료 후 변경
         self.speed.setText(dataOutput)
         self.ridingDistance.setText("Riding Distance : "+str(self.receiveSpeedCount*self.wheelDiameter)+"km/h")
-        self.rwarning()
 
     def frameUpdate(self):
         self.cameraLabel.clear() # Label을 clear하여 paintEvent가 실행되도록 함
@@ -164,50 +155,8 @@ class RidingClicked(QDialog):
         print(text)
         self.textList = text.split("/")
         self.navUpdate(self.textList[0], self.textList[1])
-
         #TODO text에 따라 다른 네비게이션이 표시되도록 수정
 
-    def lwarning(self):
-        global ltimer
-        ltimer = threading.Timer(0.5, self.lwarning)
-        if self.test == 1:
-            self.warningLeft.setStyleSheet("background-color:rgba(255,0,0,100);")
-            self.test = 0
-        else :
-            self.warningLeft.setStyleSheet("background-color:rgba(255,0,0,0);")
-            self.test = 1
-        ltimer.start()
-
-    def rwarning(self):
-        global rtimer
-        rtimer = threading.Timer(0.5, self.rwarning)
-        if self.test == 1:
-            self.warningRight.setStyleSheet("background-color:rgba(255,0,0,100);")
-            self.test = 0
-        else :
-            self.warningRight.setStyleSheet("background-color:rgba(255,0,0,0);")
-            self.test = 1
-        rtimer.start()
-
-    def bwarning(self):
-        global btimer
-        btimer = threading.Timer(0.5, self.bwarning)
-        if self.test == 1:
-            self.warningBack.setStyleSheet("background-color:rgba(255,0,0,100);")
-            self.test = 0
-        else:
-            self.warningBack.setStyleSheet("background-color:rgba(255,0,0,0);")
-            self.test = 1
-        btimer.start()
-
-    def warningStop(self, dir):
-        if dir == 'left':
-            ltimer.cancel()
-        elif dir == 'right':
-            rtimer.cancel()
-        else :
-            btimer.cancel()
-        print("timerstop")
 
     def quit(self):
         self.heartRateImage.stop()
@@ -217,6 +166,4 @@ class RidingClicked(QDialog):
             self.frontCamera.stop()
             androidBluetooth.stop()
         backcam.stop()
-        self.warningStop('right')
         self.close()
-

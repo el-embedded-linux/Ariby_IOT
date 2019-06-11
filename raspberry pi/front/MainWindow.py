@@ -12,7 +12,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 if platform.system()=='Linux':
-    import TurnSignal   #라파
+    import BreakSencor
+    import FrontLedController
     import FrontCam   #라파
     import BleClicked   #라파
 

@@ -23,8 +23,8 @@ class BackCam():
             self.data = cv2.imdecode(self.data, cv2.IMREAD_COLOR)
             self.data = cv2.resize(self.data, dsize=(800, 480), interpolation=cv2.INTER_AREA) #라즈베리파이 스크린 사이즈에 맞게 RESIZE
             self.image = QImage(self.data, self.data.shape[1], self.data.shape[0], self.data.shape[1] * 3,QImage.Format_RGB888) #create QIamge
-            if self.dataUpdate != None:
-                self.dataUpdate() #callback frameUpdate
+            if self.frameUpdate != None:
+                self.frameUpdate() #callback frameUpdate
         self.backcam_sock.close()
 
     def stop(self):
