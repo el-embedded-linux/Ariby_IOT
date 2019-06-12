@@ -3,11 +3,11 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from datetime import datetime
 
-
 class Header(QWidget):
-    def __init__(self):
+    def __init__(self, setting):
         QWidget.__init__(self, flags=Qt.Widget)
-        self.setUi()
+        self.setting = setting
+        self.setUi()        
 
     def setUi(self):
         self.font = QFont()
@@ -31,7 +31,10 @@ class Header(QWidget):
         self.horizontalLayout.addLayout(self.gridLayout)
 
     def timeout(self):
-        strTime = datetime.today().strftime("%Y.%m.%d. %H:%M ")
+        if (self.setting.timeSetup == '12') :
+            strTime = datetime.today().strftime("%Y.%m.%d. %I:%M ")
+        else :
+            strTime = datetime.today().strftime("%Y.%m.%d. %H:%M ")
         self.time.setText(self._translate("Main", strTime))
 
     def titleSet(self):
@@ -49,7 +52,10 @@ class Header(QWidget):
 
         self.time = QLabel(self.titleWidget)
         self.time.setFont(self.font)
-        self.time.setStyleSheet("color:white")
+        if (self.setting.thema=='D'):
+            self.time.setStyleSheet("color:white;")
+        else :
+            self.time.setStyleSheet("color:rgb(41,41,41);")
         self.time.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.time.setFixedWidth(180)
 
@@ -59,4 +65,3 @@ class Header(QWidget):
         self.weather.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.weather.setFixedWidth(40)
         self.weather.setStyleSheet("padding-right:20px;")
-

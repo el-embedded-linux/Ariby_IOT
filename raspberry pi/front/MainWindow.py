@@ -6,8 +6,9 @@ import platform
 import sys
 import Header
 import RidingClicked
-import RidingLiteClicked
+#import RidingLiteClicked
 import ChkRecordingClicked
+import SettingsClicked
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -69,8 +70,9 @@ class Thread(QThread):
 #스택위젯 클래스 생성
 class StackedWidget(QStackedWidget):
     index = 0
-    def __init__(self, parent=None):
-        QStackedWidget.__init__(self, parent)
+    def __init__(self, thema):
+        QStackedWidget.__init__(self)
+        self.thema = thema
 
     def setCurrentIndex(self, index):
         self.fade = FadeWidget(self.currentWidget(), self.widget(index))
@@ -80,7 +82,10 @@ class StackedWidget(QStackedWidget):
         if self.index == 0 :
             self.setCurrentIndex(1)
             self.index = 1
-            window.setStyleSheet("background-color:rgb(41,41,41)")
+            if (self.thema == 'W'):
+                window.setStyleSheet("background-color:white;")
+            else :
+                window.setStyleSheet("background-color:rgb(41,41,41);")
             loading.th.terminate()
 
 
@@ -100,7 +105,7 @@ class FadeWidget(QWidget):
         self.timeline.start()
 
         self.resize(newWidget.size())
-        self.show()
+        self.showFullScreen()
 
     def paintEvent(self, event):
         painter = QPainter()
@@ -158,8 +163,9 @@ class Loading(QWidget):
 
 #스택위젯2 메인화면
 class Main(QWidget):
-    def __init__(self):
-        QWidget.__init__(self, flags=Qt.Widget)
+    def __init__(self, window):
+        QWidget.__init__(self, window, flags=Qt.Widget)
+        self.window = window
         self.setUi()
 
     def setUi(self):
@@ -167,8 +173,9 @@ class Main(QWidget):
         self._translate = QCoreApplication.translate
         mainLayout = QVBoxLayout()
         self.setLayout(mainLayout)
-
-        self.header = Header.Header()
+        self.setWidget = SettingsClicked.SettingsClicked(self, self.window)
+        self.header = Header.Header(self.setWidget)
+        self.setWidget.getHeader(self.header)
 
         self.timer = QTimer(self)
         self.timer.start(1000)
@@ -178,16 +185,19 @@ class Main(QWidget):
 
         self.menuWidget = QLabel()
         self.menuAreaSet()
-        self.chkWidget = ChkRecordingClicked.ChkRecordingClicked(self)
+        self.chkWidget = ChkRecordingClicked.ChkRecordingClicked(self, self.setWidget)
         if platform.system()=='Linux':
-            self.blueWidget = BleClicked.BleClicked(self)   #라파
-        self.liteWidget = RidingLiteClicked.RidingLiteClicked(self)
-
+            self.blueWidget = BleClicked.BleClicked(self, self.setWidget)   #라파
+            self.setWidget.funcSet1(self, self.chkWidget, self.blueWidget)
+        else :
+            self.setWidget.funcSet(self, self.chkWidget)
+        #self.liteWidget = RidingLiteClicked.RidingLiteClicked(self)
         self.menuStack.addWidget(self.menuWidget)
         self.menuStack.addWidget(self.chkWidget)
         if platform.system()=='Linux':
             self.menuStack.addWidget(self.blueWidget)   #라파
-        self.menuStack.addWidget(self.liteWidget)
+        self.menuStack.addWidget(self.setWidget)
+        #self.menuStack.addWidget(self.liteWidget)
 
         mainLayout.setContentsMargins(0, 0, 0, 0)
         mainLayout.addWidget(self.header.titleWidget)
@@ -217,11 +227,19 @@ class Main(QWidget):
                 self.menuButton[i].setText("Bluetooth")
                 self.menuButton[i].mousePressEvent = self.blueCon
             elif i == 3:
-                self.menuButton[i].setText("Lite")
-                self.menuButton[i].mousePressEvent = self.lite
+                self.menuButton[i].setText("Settings")
+                self.menuButton[i].mousePressEvent = self.settings
+                #self.menuButton[i].mousePressEvent = self.lite
 
             self.menuLabel[i].setStyleSheet("margin:5px;")
-            self.menuButton[i].setStyleSheet("font:bold 25px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
+
+            if (self.setWidget.fontSize2 == 'S'):
+                self.menuButton[i].setStyleSheet("font:bold 20px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
+            elif (self.setWidget.fontSize2 == 'M'):
+                self.menuButton[i].setStyleSheet("font:bold 23px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
+            else :
+                self.menuButton[i].setStyleSheet("font:bold 25px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); padding-top:30px; padding-bottom:30px; outline:0px;")
+
             if (col == 2):
                 row = 1; col = 0
 
@@ -232,7 +250,7 @@ class Main(QWidget):
 
     #이벤트 설정
     def ride(self, event):
-        lDig = RidingClicked.RidingClicked()
+        lDig = RidingClicked.RidingClicked(self.setWidget)
         lDig.exec_()
         print("stop")
 
@@ -241,14 +259,16 @@ class Main(QWidget):
         self.menuStack.setCurrentIndex(1)
 
     def blueCon(self, event):
-        self.menuStack.setCurrentIndex(2)   #라파
+        self.menuStack.setCurrentIndex(2)
 
-    def lite(self, event):
+    def settings(self, event):
         self.menuStack.setCurrentIndex(3)
+
+    #def lite(self, event):
+    #    self.menuStack.setCurrentIndex(3)
 
     def changeStack(self):
         self.menuStack.setCurrentIndex(0)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -257,12 +277,18 @@ if __name__ == "__main__":
     window.resize(800, 480)
     window.setStyleSheet("background-color:rgb(106,230,197)")
 
-    stack = StackedWidget()
+    file = open(r'/home/pi/EL_IOT/raspberry pi/front/setting.txt', 'r')
+    line = file.readlines()
+    file.close()
+
+    thema = line[3][0:1]
+
+    stack = StackedWidget(thema)
     layout = QVBoxLayout(window)
 
     gif = "Images/start.gif"
     loading = Loading(gif)
-    main = Main()
+    main = Main(window)
 
     stack.addWidget(loading)
     stack.addWidget(main)
@@ -270,6 +296,6 @@ if __name__ == "__main__":
     layout.addWidget(stack)
     layout.setContentsMargins(0, 0, 0, 0)
 
-    window.show()
+    window.showFullScreen()
 
     sys.exit(app.exec_())

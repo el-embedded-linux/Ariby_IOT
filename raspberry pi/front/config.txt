@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 BLE_ADDR=0C:B2:B7:46:44:A9
 CDS=70
 UDP_PORT=8080
 TCP_PORT=8081
 VIDEO_PATH=/home/pi/EL_IOT/raspberry pi/front/Movie/
+=======
+BLE_ADDR=0C:B2:B7:46:44:A9
+CDS=70
+UDP_PORT=8080
+TCP_PORT=8081
+VIDEO_PATH=/home/pi/EL_IOT/raspberry pi/front/Movie/
+>>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7

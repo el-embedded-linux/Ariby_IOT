@@ -6,13 +6,14 @@ from PyQt5.QtMultimedia import *
 
 # 녹화 확인 스택위젯
 class ChkRecordingClicked(QLabel):
-    def __init__(self, forBack):
+    def __init__(self, forBack, setting):
         super().__init__()
         self.list = QListWidget(self)
+        self.setting = setting
         self.formSetting(forBack)
 
     def recordTest(self, item):
-        self.recordPlay = PlayRecording(item.text())
+        self.recordPlay = PlayRecording(item.text(), self.setting)
         self.recordPlay.exec_()
 
     def fileList(self):
@@ -21,9 +22,22 @@ class ChkRecordingClicked(QLabel):
 
         for fileName in fileNames:
             self.list.addItem('%s' % fileName)
-
         self.list.itemClicked.connect(self.recordTest)
-        self.list.setStyleSheet("color:white;font-size:20px;border:0px;QListWidget::item{border:1px solid red;};")
+        if(self.setting.thema=='D'):
+            if (self.setting.fontSize2=='S'):
+                self.list.setStyleSheet("color:white;font-size:18px;border:0px;QListWidget::item{border:1px solid red;};")
+            elif (self.setting.fontSize2=='M'):
+                self.list.setStyleSheet("color:white;font-size:20px;border:0px;QListWidget::item{border:1px solid red;};")
+            else :
+                self.list.setStyleSheet("color:white;font-size:22px;border:0px;QListWidget::item{border:1px solid red;};")
+        else:
+            if (self.setting.fontSize2=='S'):
+                self.list.setStyleSheet("color:rgb(41,41,41);font-size:18px;border:0px;QListWidget::item{border:1px solid red;};")
+            elif (self.setting.fontSize2=='M'):
+                self.list.setStyleSheet("color:rgb(41,41,41);font-size:20px;border:0px;QListWidget::item{border:1px solid red;};")
+            else :
+                self.list.setStyleSheet("color:rgb(41,41,41);font-size:22px;border:0px;QListWidget::item{border:1px solid red;};")
+
         self.list.setFixedWidth(750)
         self.list.setFixedHeight(330)
 
@@ -32,16 +46,19 @@ class ChkRecordingClicked(QLabel):
         self.layout.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.layout.setContentsMargins(0,0,0,0)
         self.setLayout(self.layout)
-        self.setStyleSheet("background-color:rgb(41,41,41)")
+        if (self.setting.thema == 'D'):
+            self.setStyleSheet("background-color:rgb(41,41,41)")
+        else :
+            self.setStyleSheet("background-color:white")
 
         self.quitLabel = QLabel()
         self.quitLabel.setFixedHeight(60)
         self.quitLabel.setFixedWidth(760)
 
-        self.quitBtn = QPushButton("QUIT")
+        self.quitBtn = QPushButton("Quit")
         self.quitBtn.setFixedHeight(30)
         self.quitBtn.setFixedWidth(70)
-        self.quitBtn.setStyleSheet("font:bold 14px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
+        self.quitBtn.setStyleSheet("font:bold "+self.setting.fontSize+"px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
         self.quitBtn.clicked.connect(forBack.changeStack)
 
         self.quitLayout = QGridLayout()
@@ -56,12 +73,16 @@ class ChkRecordingClicked(QLabel):
 
 
 class PlayRecording(QDialog):
-    def __init__(self, fileName):
+    def __init__(self, fileName, setting):
         super().__init__()
+        self.setting = setting
         self.formSetting(fileName)
 
     def formSetting(self, fileName):
-        self.setStyleSheet("background-color:rgb(41,41,41)")
+        if (self.setting.thema == 'D'):
+            self.setStyleSheet("background-color:rgb(41,41,41)")
+        else :
+            self.setStyleSheet("background-color:white;")
 
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
@@ -75,10 +96,10 @@ class PlayRecording(QDialog):
         lay.setContentsMargins(10,10,10,15)
         lay.addWidget(videoWidget)
 
-        backButton = QPushButton("QUIT")
+        backButton = QPushButton("Quit")
         backButton.setFixedWidth(70)
         backButton.setFixedHeight(30)
-        backButton.setStyleSheet("font:bold 14px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
+        backButton.setStyleSheet("font:bold "+self.setting.fontSize+"px Arial; color:rgb(41,41,41); border:0px; border-radius:5px; background-color:rgb(106,230,197); outline:0px;")
         backButton.clicked.connect(self.quit)
 
         self.playButton = QPushButton()
