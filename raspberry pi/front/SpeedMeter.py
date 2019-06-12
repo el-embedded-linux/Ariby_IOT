@@ -102,6 +102,7 @@ class SpeedMeter():
             while hm10 == None:
                 try:
                     hm10 = BLEDevice(self.address)
+                    vh=hm10.getvaluehandle(b'dfb1')
                     self.isConnected = True
                 except:
                     self.isConnected = False
@@ -112,7 +113,6 @@ class SpeedMeter():
 
             #데이터 수신 실패하면 연결부터 다시
             try:
-                vh=hm10.getvaluehandle(b'dfb1')
                 data = hm10.notify()
 
             except:
@@ -121,7 +121,6 @@ class SpeedMeter():
             print(data)
             if data != None and self.callback != None:
                 self.callback(data)
-            time.sleep(1)
             if self.isStoped:
                 self.isConnected = False
                 break
@@ -145,5 +144,6 @@ class SpeedMeter():
 
     def stop(self):
         self.isStoped = True
+
 
 speedmeter = SpeedMeter()
