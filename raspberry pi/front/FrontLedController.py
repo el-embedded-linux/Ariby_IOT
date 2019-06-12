@@ -12,10 +12,7 @@ class BackLedCntroller():
 
     SWITCH_LEFT = 23
     SWITCH_RIGHT = 24
-<<<<<<< HEAD
     SWITCH_EMER = 27
-=======
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
 
     #LED 상태 변수
     led_left_on = False
@@ -23,11 +20,7 @@ class BackLedCntroller():
     led_emergency_on = False
     led_night_on = False
     led_break_on = False
-<<<<<<< HEAD
     Emer_on = False;
-=======
-
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
     #깜빡임 간격
     BLINKTIME = 0.5
 
@@ -36,20 +29,14 @@ class BackLedCntroller():
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.LED_LEFT, GPIO.OUT)
         GPIO.setup(self.LED_RIGHT, GPIO.OUT)
-<<<<<<< HEAD
         GPIO.setup(self.SWITCH_EMER, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(self.SWITCH_LEFT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(self.SWITCH_RIGHT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.add_event_detect(self.SWITCH_EMER, GPIO.RISING, callback=self.emer, bouncetime=400)
-=======
-        GPIO.setup(self.SWITCH_LEFT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.setup(self.SWITCH_RIGHT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
         select_led_t = threading.Thread(target=self.select_led)
         select_led_t.start()
 
 
-<<<<<<< HEAD
     def emer(self, pin):
         if self.Emer_on:
             self.Emer_on = False
@@ -64,31 +51,20 @@ class BackLedCntroller():
                 self.dis = "emer"
                 self.emer_LED_on()
             elif GPIO.input(self.SWITCH_LEFT)==True and self.dis != "left" and self.Emer_on==False:
-=======
-    def select_led(self):
-        while True:
-            if GPIO.input(self.SWITCH_LEFT)==True and self.dis != "left":
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
+
                 self.dis = "left"
                 self.turn_on(self.LED_RIGHT)
                 self.turn_off(self.LED_LEFT)
                 sendToBack("led_right_on")
-<<<<<<< HEAD
+
             elif GPIO.input(self.SWITCH_RIGHT)==True and self.dis != "right" and self.Emer_on==False:
-=======
-                sendToBack("led_left_off")
-            elif GPIO.input(self.SWITCH_RIGHT)==True and self.dis != "right":
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
+
                 self.dis = "right"
                 self.turn_on(self.LED_LEFT)
                 self.turn_off(self.LED_RIGHT)
                 sendToBack("led_left_on")
-<<<<<<< HEAD
             elif GPIO.input(self.SWITCH_RIGHT)==False and GPIO.input(self.SWITCH_LEFT)==False and self.dis != "off" and self.Emer_on==False:
-=======
-                sendToBack("led_right_off")
-            elif GPIO.input(self.SWITCH_RIGHT)==False and GPIO.input(self.SWITCH_LEFT)==False and self.dis != "off":
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
+
                 self.dis = "off"
                 self.turn_off(self.LED_LEFT)
                 self.turn_off(self.LED_RIGHT)
@@ -114,7 +90,7 @@ class BackLedCntroller():
         if oriental == self.LED_LEFT:
             self.led_left_on = False
 
-<<<<<<< HEAD
+
     def emer_LED_on(self):
             t = threading.Thread(target=self.emer_on_thread)
             t.start()
@@ -131,9 +107,6 @@ class BackLedCntroller():
                 GPIO.output(self.LED_LEFT, GPIO.LOW)
                 GPIO.output(self.LED_RIGHT, GPIO.LOW)
                 break
-
-=======
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
     def turn_on_thread(self, led_gpio_port,turn):
 
         if led_gpio_port==self.LED_LEFT:
@@ -142,11 +115,8 @@ class BackLedCntroller():
             self.led_right_on = True
 
         while True:
-<<<<<<< HEAD
             while self.Emer_on:
                 pass
-=======
->>>>>>> 8b2043927710181e4a8a383241b61ee11f5b54b7
             GPIO.output(led_gpio_port, GPIO.HIGH)
             time.sleep(self.BLINKTIME)
             GPIO.output(led_gpio_port, GPIO.LOW)
