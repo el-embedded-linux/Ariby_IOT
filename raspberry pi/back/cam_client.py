@@ -6,7 +6,7 @@ import zlib
 
 sock = socket.socket( socket.AF_INET , socket.SOCK_DGRAM )
 img_counter = 0
-encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 20]
+encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 70]
 
 def sendToFront(frame):
     result, frame = cv2.imencode('.jpg', frame, encode_param)
@@ -15,4 +15,4 @@ def sendToFront(frame):
     size = len(data)
     #print(size)
     #stream = struct.pack(">L", size)+data
-    sock.sendto( data , ('223.194.169.139',8080) )
+    sock.sendto( data , ('192.168.100.1',8080) )
