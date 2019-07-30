@@ -1,5 +1,5 @@
 #define CIRCLE 1.946
-#define READSWITCH 5 //리드스위치 포트
+#define READSWITCH A0 //리드스위치 포트
 
 float mySpeed = 0;
 
@@ -20,7 +20,10 @@ void loop() {
   uint32_t cycleTime = (ckTime - uckTime);
   if(cycleTime>2000) mySpeed = 0;
   else mySpeed = (CIRCLE / cycleTime) * 3600;
-  Serial.println(mySpeed);
+  Serial.print("S");
+  Serial.print("speed=");
+  Serial.print(mySpeed);
+  Serial.print("E");
 }
 
 void noise_clear(){
