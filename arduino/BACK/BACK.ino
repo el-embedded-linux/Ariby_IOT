@@ -16,12 +16,12 @@ uint8_t packet[] = {START_PCK, 0x00, 0x00, 0x00, 0x00, END_PCK};
 uint8_t now_packet = 0;
 uint8_t rx_count = 0;
 uint8_t break_on=0, right_on=0, left_on=0;
-uint8_t tmp_break_on=0, tmp_right_on=0, tmp_left_on=0;
+uint8_t tmp_break_on=0, tmp_right_on=0, tmp_left_on=0, tmp_checkSum=0;
 volatile uint8_t led_status = 0;
 
 uint8_t blink_status = 0;
-
 uint8_t pre_blink_status = 0;
+
 // 0000 0000 = UNKNOWN
 // 0000 0 break left right
 
@@ -30,7 +30,7 @@ void packet_read(){
   if(Serial.available()){
     now_packet = Serial.read();
     if(now_packet == START_PCK) rx_count = 1;
-    else if(now_packet == END_PCK) rx_count = 0;
+    //else if(now_packet == END_PCK) rx_count = 0;
     else{
       switch(rx_count){
         case 2: //break
@@ -42,28 +42,31 @@ void packet_read(){
         case 4: //left
           tmp_left_on = now_packet;
           break;
-        case 5:
-          if(tmp_break_on + tmp_right_on + tmp_left_on == now_packet){ //checksum이 일치할때
-            //right
-            blink_status = blink_status & 0b11111011;
-            blink_status = blink_status & tmp_break_on;
+        case 5: //left
+          tmp_checkSum = now_packet;
+          break;
+        case 6:
+          if(tmp_break_on + tmp_right_on + tmp_left_on == tmp_checkSum && now_packet==0xFE){ //checksum이 일치할때
+            //break
+            if(tmp_break_on!=0 && tmp_break_on!=1) break;
+            blink_status = 0b00000000 | tmp_break_on<<2;
             break_on = tmp_break_on;
-            digitalWrite(BREAK_LED,break_on);
+            digitalWrite(BREAK_LED,!break_on);
+            
+            if(tmp_left_on!=0 && tmp_left_on!=1) break;
+            blink_status = blink_status | tmp_right_on<<1;
 
-            //right
-            blink_status = blink_status & 0b11111110;
-            blink_status = blink_status & tmp_right_on;
-            right_on = tmp_right_on;
-
-            //left
-            blink_status = blink_status & 0b11111101;
-            blink_status = blink_status & tmp_left_on<<1;
-            left_on = tmp_left_on;
-
+            if(tmp_left_on!=0 && tmp_left_on!=1) break;
+            blink_status = blink_status | tmp_left_on;
+            
+            Serial.write(blink_status);
             if(pre_blink_status!=blink_status){
               pre_blink_status = blink_status;
+              right_on = tmp_right_on;
+              left_on = tmp_left_on;
               blink_start();
             }
+            rx_count = 0;
           }
          break; //checkSum
       }
@@ -108,8 +111,6 @@ void blinking(){
 void blink_start(){
   MsTimer2::stop();
   led_status = 0;
-
-  Serial.write(led_status);
   digitalWrite(RIGHT_LED,HIGH);
   digitalWrite(LEFT_LED,HIGH);
   MsTimer2::start();
