@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-import pyqtgraph as pg
+#import pyqtgraph as pg
 
 class Widget_1(QLabel):
     def __init__(self):
@@ -75,7 +75,8 @@ class Widget_1(QLabel):
 class Widget_2(QLabel):
     def __init__(self):
         super(Widget_2, self).__init__()
-        #그래프
+        ###그래프  #그래프 임시 제거
+        """
         self.x = [0, 1, 2, 3, 4, 5, 6, 7, 8]
         self.y = [0, 34, 21, 40, 45, 30, 20, 25, 10]
         self.graphWd = pg.GraphicsWindow()
@@ -90,10 +91,9 @@ class Widget_2(QLabel):
         self.gpLabel.setLayout(self.graphLayout)
         self.gpLabel.setFixedHeight(137)
         self.gpLabel.setFixedWidth(200)
-
+        """
         self.FourInnerLayOut = QGridLayout()
         row = 0; col = 0;
-
         for i in range(0, 4, 1): #띄어쓰기 없애지 말기...
             if i == 0:
                 text1 = "최고속도"
@@ -150,7 +150,7 @@ class Widget_2(QLabel):
 
         self.layout2 = QVBoxLayout()
         self.layout2.setContentsMargins(0,0,0,0)
-        self.layout2.addWidget(self.gpLabel)
+        #self.layout2.addWidget(self.gpLabel) #그래프 임시 제거
         self.layout2.addWidget(self.FourLabel)
         self.setLayout(self.layout2)
 
