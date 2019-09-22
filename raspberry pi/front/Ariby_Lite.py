@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+import FrontCam
 #import pyqtgraph as pg
 
 class Widget_1(QLabel):
@@ -73,6 +74,7 @@ class Widget_1(QLabel):
 
 
 class Widget_2(QLabel):
+    isRecording = False
     def __init__(self):
         super(Widget_2, self).__init__()
         ###그래프  #그래프 임시 제거
@@ -92,6 +94,14 @@ class Widget_2(QLabel):
         self.gpLabel.setFixedHeight(137)
         self.gpLabel.setFixedWidth(200)
         """
+
+        self.camButton = QPushButton("녹화시작")
+        self.camButton.setStyleSheet("color:white;font:bold;font-size:26px;background-color: rgba(0,0,0,0.4); border-style: outset; border-width: 2px; border-color: white;")
+        self.camButton.setFixedHeight(137)
+        self.camButton.setFixedWidth(218)
+        self.camButton.clicked.connect(self.camButtonClicked)
+
+
         self.FourInnerLayOut = QGridLayout()
         row = 0; col = 0;
         for i in range(0, 4, 1): #띄어쓰기 없애지 말기...
@@ -107,7 +117,7 @@ class Widget_2(QLabel):
                 flag =1
             elif i == 2:
                 text1 = "경사도"
-                value = "  "+"4º"
+                value = "  "+"0º"
                 text2 = ""
                 flag = 1
             elif i == 3:
@@ -151,8 +161,23 @@ class Widget_2(QLabel):
         self.layout2 = QVBoxLayout()
         self.layout2.setContentsMargins(0,0,0,0)
         #self.layout2.addWidget(self.gpLabel) #그래프 임시 제거
+        self.layout2.addWidget(self.camButton)
         self.layout2.addWidget(self.FourLabel)
         self.setLayout(self.layout2)
+
+    def camButtonClicked(self):
+        if self.isRecording==False:
+            self.frontCamObject=FrontCam.FrontCam()
+            self.camButton.setText("녹화중")
+            self.camButton.setStyleSheet("color:red;font:bold;font-size:26px;background-color: rgba(0,0,0,0.4); border-style: outset; border-width: 2px; border-color: white;")
+            self.isRecording=True
+        else:
+            self.frontCamObject.stop()
+            self.camButton.setText("녹화시작")
+            self.camButton.setStyleSheet("color:white;font:bold;font-size:26px;background-color: rgba(0,0,0,0.4); border-style: outset; border-width: 2px; border-color: white;")
+            self.isRecording=False
+
+
 
 
 class Widget_3(QLabel):
@@ -215,5 +240,6 @@ if __name__ == "__main__":
     mywindow = Form()
     mywindow.resize(240, 320)
     mywindow.setStyleSheet("background-color:rgb(0,0,0)")
-    mywindow.show()
+    #mywindow.show()
+    mywindow.showFullScreen()
     app.exec_()

@@ -5,7 +5,6 @@ import time
 import os
 class FrontCam():
     isStoped = True
-
     #initializer
     def __init__(self):
         try:
@@ -13,8 +12,8 @@ class FrontCam():
         except:
             print("[FrontCam]전방 카메라 녹화를 시작하지 못했습니다.")
             return
-        self.camera.resolution = (1280, 720)
-        self.camera.framerate = 24
+        self.camera.resolution = (1920, 1080)
+        #self.camera.framerate = 30
         t = threading.Thread(target=self.run, args=())
         t.start()
 
@@ -30,7 +29,7 @@ class FrontCam():
 
         self.camera.stop_recording()
         self.camera.close()
-        os.system('avconv -r 25 -i '+'Movie/recording.h264'+' -vcodec copy '+'Movie/'+filename+'.mp4')
+        os.system('avconv -r 30 -i '+'Movie/recording.h264'+' -vcodec copy '+'Movie/'+filename+'.mp4')
         print("[FrontCam]전방 카메라 녹화를 종료합니다.")
 
     def stop(self):
