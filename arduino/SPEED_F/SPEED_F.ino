@@ -8,8 +8,9 @@ void setup(){
 }
 
 void loop(){
-    if (mySerial.available()){
-      uint8_t words = mySerial.read();
-      Serial.write(words);
+    if (Serial.available()){
+      uint8_t words = Serial.read();
+      mySerial.write(words);
     }
+    delay(1);
 }

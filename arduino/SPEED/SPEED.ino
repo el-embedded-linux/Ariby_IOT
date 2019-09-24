@@ -11,6 +11,9 @@ uint32_t count = 0;
 void setup() {
   Serial.begin(115200);
   pinMode(REEDSWITCH, INPUT);
+  delay(2000);
+  MsTimer2::set(300, send2front);
+  MsTimer2::start();
 }
 
 void loop() {
@@ -30,17 +33,23 @@ void loop() {
   if(count>2000) mySpeed = 0;
 
   beforeSpeed=mySpeed;
+  
+
+  //Serial.println(mySpeed);
+  delay(1);
+}
+
+void send2front(){
   uint8_t high = (mySpeed>>8);
   uint8_t low = mySpeed;
   uint8_t checkSum = high+low;
   if(high==0xFF || high==0xFE) high=0xFD;
   if(low==0xFF || low==0xFE) low=0xFD;
   if(checkSum==0xFF || checkSum==0xFE) checkSum=0xFD;
-  
   Serial.write(0xFF);
   Serial.write(high);
   Serial.write(low);
   Serial.write(checkSum);
   Serial.write(0xFE);
-  delay(1);
+  //Serial.println(mySpeed);
 }

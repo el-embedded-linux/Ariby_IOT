@@ -17,7 +17,7 @@ uint8_t now_packet = 0;
 uint8_t rx_count = 0;
 uint8_t break_on=0, right_on=0, left_on=0;
 uint8_t tmp_break_on=0, tmp_right_on=0, tmp_left_on=0, tmp_checkSum=0;
-volatile uint8_t led_status = 0;
+volatile uint8_t led_status = 1;
 
 uint8_t blink_status = 0;
 uint8_t pre_blink_status = 0;
@@ -29,6 +29,7 @@ uint8_t pre_blink_status = 0;
 void packet_read(){
   if(Serial.available()){
     now_packet = Serial.read();
+    //Serial.println(now_packet,HEX);
     if(now_packet == START_PCK) rx_count = 1;
     //else if(now_packet == END_PCK) rx_count = 0;
     else{
@@ -59,7 +60,7 @@ void packet_read(){
             if(tmp_left_on!=0 && tmp_left_on!=1) break;
             blink_status = blink_status | tmp_left_on;
             
-            Serial.write(blink_status);
+            Serial.print(blink_status,HEX);
             if(pre_blink_status!=blink_status){
               pre_blink_status = blink_status;
               right_on = tmp_right_on;
@@ -110,9 +111,23 @@ void blinking(){
 
 void blink_start(){
   MsTimer2::stop();
-  led_status = 0;
-  digitalWrite(RIGHT_LED,HIGH);
-  digitalWrite(LEFT_LED,HIGH);
+  led_status = 1;
+  if(left_on==1 && right_on==0){
+    digitalWrite(RIGHT_LED,HIGH);
+    digitalWrite(LEFT_LED,LOW);
+  }
+  else if(left_on==0 && right_on==1){
+    digitalWrite(RIGHT_LED,LOW);
+    digitalWrite(LEFT_LED,HIGH);
+  }
+  else if(left_on==1 && right_on==1){
+    digitalWrite(RIGHT_LED,LOW);
+    digitalWrite(LEFT_LED,LOW);
+  }
+  else{
+    digitalWrite(RIGHT_LED,HIGH);
+    digitalWrite(LEFT_LED,HIGH);
+  }
   MsTimer2::start();
 }
 
