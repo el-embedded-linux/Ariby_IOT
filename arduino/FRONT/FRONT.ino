@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial mySerial(2, 3);
+SoftwareSerial mySerial(3, 2);
 
 #define BLINK_INTERVAL 300
 
@@ -117,11 +117,10 @@ void loop() {
   get_switch();
   packet_read();
   back_packet_write();
-  //mySerial.write('A');
   Serial.print((float)mySpeed/100);
   Serial.print(",");
   uint16_t registerValue = analogRead(A7);
-  registerValue = registerValue-130;
+  registerValue = registerValue-124; //Black = 124 White = 317
   registerValue = map(registerValue, 0, 1024, 0, 300);
   Serial.print(registerValue);
   Serial.print(",");
